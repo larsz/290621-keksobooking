@@ -1,8 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Eugen Lobicov](https://up.htmlacademy.ru/javascript/12/user/290621).
-* Наставник: [Роман Чаругин](
-https://htmlacademy.ru/profile/id345379).
+* Наставник: [Роман Чаругин](https://htmlacademy.ru/profile/id345379).
 
 ---
 
