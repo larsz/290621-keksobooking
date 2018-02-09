@@ -43,6 +43,7 @@ var PRICE_MIN = 1000;
 var PRICE_MAX = 1000000;
 var ROOMS_MIN = 1;
 var ROOMS_MAX = 5;
+var GUESTS_MIN = 1;
 var LOCATION_X_MIN = 300;
 var LOCATION_X_MAX = 900;
 var LOCATION_Y_MIN = 150;
@@ -52,12 +53,13 @@ var MAP_PIN_HEIGTH = 70;
 var AVATAR_PATH = 'img/avatars/user';
 
 
+// common functions
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
 var getRandomIndex = function (arr) {
-  return Math.floor(Math.random() * arr.length);
+  return getRandomNumber(0, arr.length - 1);
 };
 
 var getRandomElement = function (arr) {
@@ -78,80 +80,16 @@ var getRandomCollection = function (arr, N) {
   return generatedArr;
 };
 
+// specific functions
 var getUserAvatar = function (avatarId) {
+  var avatarIndex = avatarId === 0 ? 1 : avatarId;
 
-  avatarId++;
-
-  if (avatarId < 10) {
-    avatarId = '0' + avatarId;
+  if (avatarIndex < 10) {
+    avatarIndex = '0' + avatarIndex;
   }
 
-  return AVATAR_PATH + avatarId + '.png';
+  return AVATAR_PATH + avatarIndex + '.png';
 };
-
-var getOfferTitle = function () {
-  return getRandomElement(OFFER_TITLES);
-};
-
-var getOfferPrice = function () {
-  return getRandomNumber(PRICE_MIN, PRICE_MAX);
-};
-
-var getOfferType = function () {
-  return getRandomElement(OFFER_TYPES);
-};
-
-var getOfferRooms = function () {
-  return getRandomNumber(ROOMS_MIN, ROOMS_MAX);
-};
-
-var getOfferGuests = function () {
-  return Math.floor(Math.random() * 10) + 1;
-};
-
-var getOfferFeatures = function () {
-  return getRandomCollection(OFFER_FEATURES, getRandomIndex(OFFER_FEATURES));
-};
-
-var getOfferPhotos = function () {
-  return getRandomCollection(OFFER_PHOTOS, OFFER_PHOTOS.length - 1);
-};
-
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
-
-var fragment = document.createDocumentFragment();
-var mapPinsList = document.querySelector('.map__pins');
-var mapPin = document.querySelector('template').content.querySelector('.map__pin');
-var mapFilters = document.querySelector('.map__filters-container');
-
-var ads = [];
-var adsCount = 8;
-
-for (var i = 0; i < adsCount; i++) {
-  ads.push({
-    'author': {
-      'avatar': getUserAvatar(i)
-    },
-    'offer': {
-      'title': getOfferTitle(),
-      'address': getRandomNumber(LOCATION_X_MIN, LOCATION_X_MAX) + ',' + getRandomNumber(LOCATION_Y_MIN, LOCATION_Y_MAX),
-      'price': getOfferPrice(),
-      'type': getOfferType(),
-      'rooms': getOfferRooms(),
-      'guests': getOfferGuests(),
-      'checkin': getRandomElement(OFFER_CHECKINS),
-      'checkout': getRandomElement(OFFER_CHECKOUTS),
-      'features': getOfferFeatures(),
-      'description': '',
-      'photos': getOfferPhotos()
-    },
-    'location': {
-      'x': getRandomNumber(LOCATION_X_MIN, LOCATION_X_MAX),
-      'y': getRandomNumber(LOCATION_Y_MIN, LOCATION_Y_MAX)
-    }
-  });
-}
 
 var localizeOfferType = function (offerType) {
   switch (offerType) {
@@ -162,50 +100,100 @@ var localizeOfferType = function (offerType) {
   }
 };
 
-for (i = 0; i < ads.length; i++) {
-  var adPin = mapPin.cloneNode(true);
-  var adPinLeft = ads[i].location.x - MAP_PIN_WIDTH + 'px';
-  var adPinTop = ads[i].location.y - MAP_PIN_HEIGTH + 'px';
+var ads = [];
 
-  adPin.setAttribute('style', 'left: ' + adPinLeft + '; top: ' + adPinTop);
-  adPin.querySelector('img').setAttribute('src', ads[i].author.avatar);
-  fragment.appendChild(adPin);
-}
+var generateOffers = function (offersNumber) {
+  var adsCount = offersNumber;
 
+  for (var i = 0; i < adsCount; i++) {
+    var locationX = getRandomNumber(LOCATION_X_MIN, LOCATION_X_MAX);
+    var locationY = getRandomNumber(LOCATION_Y_MIN, LOCATION_Y_MAX);
 
-mapPinsList.appendChild(fragment);
+    ads.push({
+      'author': {
+        'avatar': getUserAvatar(i)
+      },
+      'offer': {
+        'title': getRandomElement(OFFER_TITLES),
+        'address': locationX + ',' + locationY,
+        'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
+        'type': getRandomElement(OFFER_TYPES),
+        'rooms': getRandomNumber(ROOMS_MIN, ROOMS_MAX),
+        'guests': getRandomNumber(GUESTS_MIN, getRandomNumber(ROOMS_MIN, ROOMS_MAX)),
+        'checkin': getRandomElement(OFFER_CHECKINS),
+        'checkout': getRandomElement(OFFER_CHECKOUTS),
+        'features': getRandomCollection(OFFER_FEATURES, getRandomIndex(OFFER_FEATURES)),
+        'description': '',
+        'photos': getRandomCollection(OFFER_PHOTOS, OFFER_PHOTOS.length - 1)
+      },
+      'location': {
+        'x': locationX,
+        'y': locationY
+      }
+    });
+  }
+};
 
+generateOffers(8);
+
+// DOM elements
+var mapElement = document.querySelector('.map');
+mapElement.classList.remove('map--faded');
+
+var fragment = document.createDocumentFragment();
+var mapPinsElement = document.querySelector('.map__pins');
+var mapPinElement = document.querySelector('template').content.querySelector('.map__pin');
+var mapFiltersElement = document.querySelector('.map__filters-container');
+
+// Add pins on map
+// Generate pins with data
+var renderOffers = function (container, offers) {
+  for (var i = 0; i < offers.length; i++) {
+    var adPinElement = container.cloneNode(true);
+    var adPinLeft = ads[i].location.x - MAP_PIN_WIDTH + 'px';
+    var adPinTop = ads[i].location.y - MAP_PIN_HEIGTH + 'px';
+
+    adPinElement.setAttribute('style', 'left: ' + adPinLeft + '; top: ' + adPinTop);
+    adPinElement.querySelector('img').setAttribute('src', ads[i].author.avatar);
+    fragment.appendChild(adPinElement);
+  }
+};
+
+renderOffers(mapPinElement, ads);
+mapPinsElement.appendChild(fragment);
+
+// Add featured ad on map
 var featuredAd = ads[0];
-var mapCard = document.querySelector('template').content.querySelector('.map__card');
+var mapCardElement = document.querySelector('template').content.querySelector('.map__card');
 
 var renderAd = function (ad) {
-  var adTemplate = mapCard.cloneNode(true);
-  adTemplate.querySelector('h3').textContent = ad.offer.title;
-  adTemplate.querySelector('small').textContent = ad.offer.address;
-  adTemplate.querySelector('h4').textContent = localizeOfferType(ad.offer.type);
-  adTemplate.querySelector('.popup__price').textContent = ad.offer.price + '&#x20bd;/ночь';
-  adTemplate.querySelectorAll('p')[2].textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
-  adTemplate.querySelectorAll('p')[3].textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
-  adTemplate.querySelectorAll('p')[4].textContent = ad.offer.description;
-  adTemplate.querySelector('.popup__avatar').setAttribute('src', ad.author.avatar);
+  var adElement = mapCardElement.cloneNode(true);
+  adElement.querySelector('h3').textContent = ad.offer.title;
+  adElement.querySelector('small').textContent = ad.offer.address;
+  adElement.querySelector('h4').textContent = localizeOfferType(ad.offer.type);
+  adElement.querySelector('.popup__price').textContent = ad.offer.price + '&#x20bd;/ночь';
+  adElement.querySelectorAll('p')[2].textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
+  adElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
+  adElement.querySelectorAll('p')[4].textContent = ad.offer.description;
+  adElement.querySelector('.popup__avatar').setAttribute('src', ad.author.avatar);
 
-  var featuresList = adTemplate.querySelector('.popup__features');
-  while (featuresList.firstChild) {
-    featuresList.removeChild(featuresList.firstChild);
+  var featuresListElement = adElement.querySelector('.popup__features');
+  while (featuresListElement.firstChild) {
+    featuresListElement.removeChild(featuresListElement.firstChild);
   }
 
-  for (i = 0; i < ad.offer.features.length; i++) {
+  for (var i = 0; i < ad.offer.features.length; i++) {
     var featuresListItem = document.createElement('li');
     featuresListItem.classList.add('feature', 'feature--' + ad.offer.features[i]);
     fragment.appendChild(featuresListItem);
   }
 
-  featuresList.appendChild(fragment);
+  featuresListElement.appendChild(fragment);
 
-  return adTemplate;
+  return adElement;
 };
 
 fragment.appendChild(renderAd(featuredAd));
-map.insertBefore(fragment, mapFilters);
+mapElement.insertBefore(fragment, mapFiltersElement);
 
 
