@@ -82,7 +82,7 @@ var getRandomCollection = function (arr, N) {
 
 // specific functions
 var getUserAvatar = function (avatarId) {
-  var avatarIndex = avatarId === 0 ? 1 : avatarId;
+  var avatarIndex = avatarId + 1;
 
   if (avatarIndex < 10) {
     avatarIndex = '0' + avatarIndex;
@@ -100,16 +100,16 @@ var localizeOfferType = function (offerType) {
   }
 };
 
-var ads = [];
+// generate data
+var generateOffers = function (number) {
+  var data = [];
+  var dataCount = number;
 
-var generateOffers = function (offersNumber) {
-  var adsCount = offersNumber;
-
-  for (var i = 0; i < adsCount; i++) {
+  for (var i = 0; i < dataCount; i++) {
     var locationX = getRandomNumber(LOCATION_X_MIN, LOCATION_X_MAX);
     var locationY = getRandomNumber(LOCATION_Y_MIN, LOCATION_Y_MAX);
 
-    ads.push({
+    data.push({
       'author': {
         'avatar': getUserAvatar(i)
       },
@@ -132,9 +132,10 @@ var generateOffers = function (offersNumber) {
       }
     });
   }
+  return data;
 };
 
-generateOffers(8);
+var ads = generateOffers(8);
 
 // DOM elements
 var mapElement = document.querySelector('.map');
@@ -177,6 +178,7 @@ var renderAd = function (ad) {
   adElement.querySelectorAll('p')[4].textContent = ad.offer.description;
   adElement.querySelector('.popup__avatar').setAttribute('src', ad.author.avatar);
 
+  // Render features
   var featuresListElement = adElement.querySelector('.popup__features');
   while (featuresListElement.firstChild) {
     featuresListElement.removeChild(featuresListElement.firstChild);
@@ -189,6 +191,24 @@ var renderAd = function (ad) {
   }
 
   featuresListElement.appendChild(fragment);
+
+  // Render photos
+  var photosElement = adElement.querySelector('.popup__pictures');
+  var photoElement = photosElement.querySelector('li');
+
+  for (i = 0; i < ad.offer.photos.length; i++) {
+    var clonePhotoElement = photoElement.cloneNode(true);
+    var photo = clonePhotoElement.querySelector('img');
+
+    photo.setAttribute('src', ad.offer.photos[i]);
+    photo.width = '70';
+    photo.height = '70';
+
+    fragment.appendChild(clonePhotoElement);
+  }
+
+  photosElement.insertBefore(fragment, photoElement);
+  photosElement.removeChild(photoElement);
 
   return adElement;
 };
