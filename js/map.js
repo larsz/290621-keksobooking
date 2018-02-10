@@ -139,15 +139,13 @@ var ads = generateOffers(8);
 
 // DOM elements
 var mapElement = document.querySelector('.map');
-mapElement.classList.remove('map--faded');
-
-var fragment = document.createDocumentFragment();
 var mapPinsElement = document.querySelector('.map__pins');
 var mapPinElement = document.querySelector('template').content.querySelector('.map__pin');
 var mapFiltersElement = document.querySelector('.map__filters-container');
+var fragment = document.createDocumentFragment();
 
-// Add pins on map
 // Generate pins with data
+var pinContainer = document.createDocumentFragment();
 var renderOffers = function (container, offers) {
   for (var i = 0; i < offers.length; i++) {
     var adPinElement = container.cloneNode(true);
@@ -156,14 +154,17 @@ var renderOffers = function (container, offers) {
 
     adPinElement.setAttribute('style', 'left: ' + adPinLeft + '; top: ' + adPinTop);
     adPinElement.querySelector('img').setAttribute('src', ads[i].author.avatar);
-    fragment.appendChild(adPinElement);
+    pinContainer.appendChild(adPinElement);
   }
 };
 
-renderOffers(mapPinElement, ads);
-mapPinsElement.appendChild(fragment);
+// Add generated pins on map
+var showSimilarOffers = function () {
+  renderOffers(mapPinElement, ads);
+  mapPinsElement.appendChild(pinContainer);
+};
 
-// Add featured ad on map
+// Generate featured ad
 var featuredAd = ads[0];
 var mapCardElement = document.querySelector('template').content.querySelector('.map__card');
 
@@ -213,7 +214,42 @@ var renderAd = function (ad) {
   return adElement;
 };
 
+// Add featured ad on map
 fragment.appendChild(renderAd(featuredAd));
-mapElement.insertBefore(fragment, mapFiltersElement);
+//mapElement.insertBefore(fragment, mapFiltersElement);
+
+var noticeFormElement = document.querySelector('.notice__form');
+var noticeFieldsetElement = noticeFormElement.querySelectorAll('fieldset');
+var mainPinElement = document.querySelector('.map__pin--main');
+
+// inactive state
+var disableFormFields = function () {
+  for (var i = 0; i < noticeFieldsetElement.length; i++) {
+    noticeFieldsetElement[i].setAttribute('disabled', true);
+  }
+};
+
+var enableFormFields = function () {
+  for (var i = 0; i < noticeFieldsetElement.length; i++) {
+    noticeFieldsetElement[i].setAttribute('disabled', false);
+  }
+};
+
+var activatePage = function () {
+  noticeFormElement.classList.remove('notice__form--disabled');
+  mapElement.classList.remove('map--faded');
+  enableFormFields();
+  showSimilarOffers();
+};
+
+var disablePage = function () {
+  disableFormFields();
+};
 
 
+mainPinElement.addEventListener('mouseup', function () {
+  activatePage();
+});
+
+// turn page to inactive state on load
+disablePage();
