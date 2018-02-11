@@ -146,26 +146,31 @@ var fragment = document.createDocumentFragment();
 
 // Generate pins with data
 var pinContainer = document.createDocumentFragment();
-var renderOffers = function (container, offers) {
+var generatePins = function (container, offers) {
   for (var i = 0; i < offers.length; i++) {
-    var adPinElement = container.cloneNode(true);
-    var adPinLeft = ads[i].location.x - MAP_PIN_WIDTH + 'px';
-    var adPinTop = ads[i].location.y - MAP_PIN_HEIGTH + 'px';
+    var pinElement = container.cloneNode(true);
+    var pinLeft = ads[i].location.x - MAP_PIN_WIDTH + 'px';
+    var pinTop = ads[i].location.y - MAP_PIN_HEIGTH + 'px';
 
-    adPinElement.setAttribute('style', 'left: ' + adPinLeft + '; top: ' + adPinTop);
-    adPinElement.querySelector('img').setAttribute('src', ads[i].author.avatar);
-    pinContainer.appendChild(adPinElement);
+    pinElement.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
+    pinElement.querySelector('img').setAttribute('src', ads[i].author.avatar);
+    pinElement.setAttribute('data-pin', i);
+    pinContainer.appendChild(pinElement);
+
+    pinElement.addEventListener('click', function (evt) {
+      var clickedElementIndex = evt.target.parentNode.getAttribute('data-pin');
+      showOfferInfo(clickedElementIndex);
+    });
   }
 };
 
 // Add generated pins on map
 var showSimilarOffers = function () {
-  renderOffers(mapPinElement, ads);
+  generatePins(mapPinElement, ads);
   mapPinsElement.appendChild(pinContainer);
 };
 
-// Generate featured ad
-var featuredAd = ads[0];
+// Add generated data to template
 var mapCardElement = document.querySelector('template').content.querySelector('.map__card');
 
 var renderAd = function (ad) {
@@ -214,9 +219,11 @@ var renderAd = function (ad) {
   return adElement;
 };
 
-// Add featured ad on map
-fragment.appendChild(renderAd(featuredAd));
-//mapElement.insertBefore(fragment, mapFiltersElement);
+// Show popup with offer details
+var showOfferInfo = function (index) {
+  fragment.appendChild(renderAd(ads[index]));
+  mapElement.insertBefore(fragment, mapFiltersElement);
+};
 
 var noticeFormElement = document.querySelector('.notice__form');
 var noticeFieldsetElement = noticeFormElement.querySelectorAll('fieldset');
