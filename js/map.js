@@ -54,7 +54,6 @@ var AVATAR_PATH = 'img/avatars/user';
 
 var ENTER_KEYCODE = 13;
 
-
 // common functions
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -101,8 +100,22 @@ var localizeOfferType = function (offerType) {
     default: return '';
   }
 };
+var localizeRooms = function (roomsNumber) {
+  switch (roomsNumber) {
+    case 1 : return roomsNumber + ' комната для ';
+    case 5 : return roomsNumber + ' комнат для ';
+    default: return roomsNumber + ' комнаты для ';
+  }
+};
+var localizeGuests = function (guestsNumber) {
+  switch (guestsNumber) {
+    case 1 : return guestsNumber + ' гостя';
+    default: return guestsNumber + ' гостей';
+  }
+};
 
-// generate data
+
+// Generate data
 var generateOffers = function (number) {
   var data = [];
 
@@ -136,51 +149,6 @@ var generateOffers = function (number) {
   return data;
 };
 
-var ads = generateOffers(8);
-
-// DOM elements
-var mapElement = document.querySelector('.map');
-var mainPinElement = document.querySelector('.map__pin--main');
-var mapPinsElement = document.querySelector('.map__pins');
-var mapPinElement = document.querySelector('template').content.querySelector('.map__pin');
-var mapFiltersElement = document.querySelector('.map__filters-container');
-var fragment = document.createDocumentFragment();
-
-// Generate pins with data
-var pinContainer = document.createDocumentFragment();
-var generatePins = function (container, offers) {
-  for (var i = 0; i < offers.length; i++) {
-    var pinElement = container.cloneNode(true);
-    var pinLeft = offers[i].location.x - MAP_PIN_WIDTH + 'px';
-    var pinTop = offers[i].location.y - MAP_PIN_HEIGTH + 'px';
-
-    pinElement.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
-    pinElement.querySelector('img').setAttribute('src', offers[i].author.avatar);
-    pinElement.setAttribute('data-pin', i);
-    pinContainer.appendChild(pinElement);
-
-    pinElement.addEventListener('click', function (evt) {
-      var clickedElementIndex = evt.target.parentNode.getAttribute('data-pin');
-      showOfferInfo(clickedElementIndex);
-    });
-
-    pinElement.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ENTER_KEYCODE) {
-        evt.preventDefault();
-        var clickedElementIndex = evt.target.getAttribute('data-pin');
-        showOfferInfo(clickedElementIndex);
-      }
-    });
-
-  }
-};
-
-// Add generated pins on map
-var showSimilarOffers = function () {
-  generatePins(mapPinElement, ads);
-  mapPinsElement.appendChild(pinContainer);
-};
-
 // Add generated data to template
 var mapCardElement = document.querySelector('template').content.querySelector('.map__card');
 
@@ -190,7 +158,7 @@ var renderAd = function (ad) {
   adElement.querySelector('small').textContent = ad.offer.address;
   adElement.querySelector('h4').textContent = localizeOfferType(ad.offer.type);
   adElement.querySelector('.popup__price').textContent = ad.offer.price + ' \u20BD/ночь';
-  adElement.querySelectorAll('p')[2].textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
+  adElement.querySelectorAll('p')[2].textContent = localizeRooms(ad.offer.rooms) + localizeGuests(ad.offer.guests);
   adElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
   adElement.querySelectorAll('p')[4].textContent = ad.offer.description;
   adElement.querySelector('.popup__avatar').setAttribute('src', ad.author.avatar);
@@ -230,21 +198,58 @@ var renderAd = function (ad) {
   return adElement;
 };
 
+// Generate pins
+var pinContainer = document.createDocumentFragment();
+var generatePins = function (container, offers) {
+  for (var i = 0; i < offers.length; i++) {
+    var pinElement = container.cloneNode(true);
+    var pinLeft = (offers[i].location.x - MAP_PIN_WIDTH / 2) + 'px';
+    var pinTop = (offers[i].location.y - MAP_PIN_HEIGTH) + 'px';
+
+    pinElement.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
+    pinElement.querySelector('img').setAttribute('src', offers[i].author.avatar);
+    pinElement.setAttribute('data-pin', i);
+    pinContainer.appendChild(pinElement);
+
+    pinElement.addEventListener('click', pinClickHandler);
+    pinElement.addEventListener('keydown', pinClickHandler);
+
+  }
+};
+
+// DOM elements
+var mapElement = document.querySelector('.map');
+var mainPinElement = document.querySelector('.map__pin--main');
+var mapPinsElement = document.querySelector('.map__pins');
+var mapPinElement = document.querySelector('template').content.querySelector('.map__pin');
+var mapFiltersElement = document.querySelector('.map__filters-container');
+var noticeFormElement = document.querySelector('.notice__form');
+var noticeFieldsetElement = noticeFormElement.querySelectorAll('fieldset');
+var fragment = document.createDocumentFragment();
+
+// Generate 8 test offers
+var ads = generateOffers(8);
+
+// Show generated pins on map
+var showSimilarOffers = function () {
+  generatePins(mapPinElement, ads);
+  mapPinsElement.appendChild(pinContainer);
+};
+
+
+// Pin Handler
+var pinClickHandler = function (evt) {
+  var clickedElement = evt.currentTarget.getAttribute('data-pin');
+  if (evt.keyCode === ENTER_KEYCODE || evt.type === 'click') {
+    showOfferInfo(clickedElement);
+  }
+};
+
 // Show popup with offer details
 var showOfferInfo = function (index) {
   fragment.appendChild(renderAd(ads[index]));
   mapElement.insertBefore(fragment, mapFiltersElement);
 };
-
-var noticeFormElement = document.querySelector('.notice__form');
-var noticeFieldsetElement = noticeFormElement.querySelectorAll('fieldset');
-
-var fillDefaultAddress = function () {
-  var addressFieldElement = document.getElementById('address');
-  var mainPinRect = mainPinElement.getBoundingClientRect();
-  addressFieldElement.value = mainPinRect.x + ', ' + mainPinRect.y;
-};
-
 
 // inactive state
 var disableFormFields = function () {
@@ -252,6 +257,13 @@ var disableFormFields = function () {
     noticeFieldsetElement[i].setAttribute('disabled', true);
   }
 };
+
+var fillDefaultAddress = function () {
+  var addressFieldElement = document.getElementById('address');
+  var mainPinRect = mainPinElement.getBoundingClientRect();
+  addressFieldElement.value = mainPinRect.x + ', ' + mainPinRect.y;
+};
+
 
 var enableFormFields = function () {
   for (var i = 0; i < noticeFieldsetElement.length; i++) {
@@ -278,3 +290,4 @@ mainPinElement.addEventListener('mouseup', function () {
 
 // turn page to inactive state on load
 disablePage();
+
