@@ -52,6 +52,8 @@ var MAP_PIN_WIDTH = 50;
 var MAP_PIN_HEIGTH = 70;
 var AVATAR_PATH = 'img/avatars/user';
 
+var ENTER_KEYCODE = 13;
+
 
 // common functions
 var getRandomNumber = function (min, max) {
@@ -139,6 +141,7 @@ var ads = generateOffers(8);
 
 // DOM elements
 var mapElement = document.querySelector('.map');
+var mainPinElement = document.querySelector('.map__pin--main');
 var mapPinsElement = document.querySelector('.map__pins');
 var mapPinElement = document.querySelector('template').content.querySelector('.map__pin');
 var mapFiltersElement = document.querySelector('.map__filters-container');
@@ -149,11 +152,11 @@ var pinContainer = document.createDocumentFragment();
 var generatePins = function (container, offers) {
   for (var i = 0; i < offers.length; i++) {
     var pinElement = container.cloneNode(true);
-    var pinLeft = ads[i].location.x - MAP_PIN_WIDTH + 'px';
-    var pinTop = ads[i].location.y - MAP_PIN_HEIGTH + 'px';
+    var pinLeft = offers[i].location.x - MAP_PIN_WIDTH + 'px';
+    var pinTop = offers[i].location.y - MAP_PIN_HEIGTH + 'px';
 
     pinElement.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
-    pinElement.querySelector('img').setAttribute('src', ads[i].author.avatar);
+    pinElement.querySelector('img').setAttribute('src', offers[i].author.avatar);
     pinElement.setAttribute('data-pin', i);
     pinContainer.appendChild(pinElement);
 
@@ -161,6 +164,15 @@ var generatePins = function (container, offers) {
       var clickedElementIndex = evt.target.parentNode.getAttribute('data-pin');
       showOfferInfo(clickedElementIndex);
     });
+
+    pinElement.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ENTER_KEYCODE) {
+        evt.preventDefault();
+        var clickedElementIndex = evt.target.getAttribute('data-pin');
+        showOfferInfo(clickedElementIndex);
+      }
+    });
+
   }
 };
 
@@ -178,7 +190,7 @@ var renderAd = function (ad) {
   adElement.querySelector('h3').textContent = ad.offer.title;
   adElement.querySelector('small').textContent = ad.offer.address;
   adElement.querySelector('h4').textContent = localizeOfferType(ad.offer.type);
-  adElement.querySelector('.popup__price').textContent = ad.offer.price + '&#x20bd;/ночь';
+  adElement.querySelector('.popup__price').textContent = ad.offer.price + ' \u20BD/ночь';
   adElement.querySelectorAll('p')[2].textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
   adElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
   adElement.querySelectorAll('p')[4].textContent = ad.offer.description;
@@ -227,7 +239,13 @@ var showOfferInfo = function (index) {
 
 var noticeFormElement = document.querySelector('.notice__form');
 var noticeFieldsetElement = noticeFormElement.querySelectorAll('fieldset');
-var mainPinElement = document.querySelector('.map__pin--main');
+
+var fillDefaultAddress = function () {
+  var addressFieldElement = document.getElementById('address');
+  var mainPinRect = mainPinElement.getBoundingClientRect();
+  addressFieldElement.value = mainPinRect.x + ', ' + mainPinRect.y;
+};
+
 
 // inactive state
 var disableFormFields = function () {
@@ -251,6 +269,7 @@ var activatePage = function () {
 
 var disablePage = function () {
   disableFormFields();
+  fillDefaultAddress();
 };
 
 
