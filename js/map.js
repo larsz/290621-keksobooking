@@ -105,9 +105,8 @@ var localizeOfferType = function (offerType) {
 // generate data
 var generateOffers = function (number) {
   var data = [];
-  var dataCount = number;
 
-  for (var i = 0; i < dataCount; i++) {
+  for (var i = 0; i < number; i++) {
     var locationX = getRandomNumber(LOCATION_X_MIN, LOCATION_X_MAX);
     var locationY = getRandomNumber(LOCATION_Y_MIN, LOCATION_Y_MAX);
 
