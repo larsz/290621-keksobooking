@@ -10,11 +10,18 @@ var OFFER_TITLES = [
   'Уютное бунгало далеко от моря',
   'Неуютное бунгало по колено в воде'
 ];
-var OFFER_TYPES = [
-  'flat',
-  'house',
-  'bungalo'
-];
+var OFFER_TYPES = {
+  bungalo: {minPrice: 0},
+  flat: {minPrice: 1000},
+  house: {minPrice: 5000},
+  palace: {minPrice: 10000}
+};
+var OFFER_ROOMS_CAPACITY = {
+  1: ['1'],
+  2: ['2', '1'],
+  3: ['3', '2', '1'],
+  100: ['0']
+};
 var OFFER_CHECKINS = [
   '12:00',
   '13:00',
@@ -51,8 +58,6 @@ var LOCATION_Y_MAX = 500;
 var MAP_PIN_WIDTH = 50;
 var MAP_PIN_HEIGTH = 70;
 var AVATAR_PATH = 'img/avatars/user';
-
-var ENTER_KEYCODE = 13;
 
 // common functions
 var getRandomNumber = function (min, max) {
@@ -97,6 +102,7 @@ var localizeOfferType = function (offerType) {
     case 'flat': return 'Квартира';
     case 'bungalo': return 'Бунгало';
     case 'house': return 'Дом';
+    case 'palace': return 'Дворец';
     default: return '';
   }
 };
@@ -131,7 +137,7 @@ var generateOffers = function (number) {
         'title': getRandomElement(OFFER_TITLES),
         'address': locationX + ',' + locationY,
         'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
-        'type': getRandomElement(OFFER_TYPES),
+        'type': getRandomElement(Object.keys(OFFER_TYPES)),
         'rooms': getRandomNumber(ROOMS_MIN, ROOMS_MAX),
         'guests': getRandomNumber(GUESTS_MIN, getRandomNumber(ROOMS_MIN, ROOMS_MAX)),
         'checkin': getRandomElement(OFFER_CHECKINS),
@@ -210,10 +216,6 @@ var generatePins = function (container, offers) {
     pinElement.querySelector('img').setAttribute('src', offers[i].author.avatar);
     pinElement.setAttribute('data-pin', i);
     pinContainer.appendChild(pinElement);
-
-    pinElement.addEventListener('click', pinClickHandler);
-    pinElement.addEventListener('keydown', pinClickHandler);
-
   }
 };
 
@@ -226,6 +228,12 @@ var mapFiltersElement = document.querySelector('.map__filters-container');
 var noticeFormElement = document.querySelector('.notice__form');
 var noticeFieldsetElement = noticeFormElement.querySelectorAll('fieldset');
 var fragment = document.createDocumentFragment();
+var noticeFormType = noticeFormElement.querySelector('#type');
+var noticeFormPrice = noticeFormElement.querySelector('#price');
+var noticeFormTimein = noticeFormElement.querySelector('#timein');
+var noticeFormTimeout = noticeFormElement.querySelector('#timeout');
+var noticeFormRooms = noticeFormElement.querySelector('#room_number');
+var noticeFormCapacity = noticeFormElement.querySelector('#capacity');
 
 // Generate 8 test offers
 var ads = generateOffers(8);
@@ -236,25 +244,33 @@ var showSimilarOffers = function () {
   mapPinsElement.appendChild(pinContainer);
 };
 
-
-// Pin Handler
-var pinClickHandler = function (evt) {
-  var clickedElement = evt.currentTarget.getAttribute('data-pin');
-  if (evt.keyCode === ENTER_KEYCODE || evt.type === 'click') {
-    showOfferInfo(clickedElement);
-  }
-};
-
 // Show popup with offer details
 var showOfferInfo = function (index) {
   fragment.appendChild(renderAd(ads[index]));
   mapElement.insertBefore(fragment, mapFiltersElement);
 };
 
+// Event listeners
+// Pin Click Handler
+var pinClickHandler = function (evt) {
+  var clickedElement = evt.target;
+  if (clickedElement.hasAttribute('data-pin') !== true) {
+    clickedElement = clickedElement.parentElement;
+  }
+
+  var clickedIndex = clickedElement.getAttribute('data-pin');
+
+  if (clickedIndex) {
+    showOfferInfo(clickedIndex);
+  }
+};
+
+mapElement.addEventListener('click', pinClickHandler, true);
+
 // inactive state
 var disableFormFields = function () {
   for (var i = 0; i < noticeFieldsetElement.length; i++) {
-    noticeFieldsetElement[i].setAttribute('disabled', true);
+    noticeFieldsetElement[i].disabled = true;
   }
 };
 
@@ -264,25 +280,72 @@ var fillDefaultAddress = function () {
   addressFieldElement.value = mainPinRect.x + ', ' + mainPinRect.y;
 };
 
-
 var enableFormFields = function () {
   for (var i = 0; i < noticeFieldsetElement.length; i++) {
-    noticeFieldsetElement[i].setAttribute('disabled', false);
+    noticeFieldsetElement[i].disabled = false;
   }
 };
+
+// validation
+var updatePrice = function () {
+  var minPrice = OFFER_TYPES[noticeFormType.value].minPrice;
+  noticeFormPrice.min = minPrice;
+  noticeFormPrice.placeholder = minPrice;
+};
+
+var updateCapacity = function () {
+  var capacityOptions = noticeFormCapacity.querySelectorAll('option');
+  var selectedRooms = parseInt(noticeFormRooms.options[noticeFormRooms.selectedIndex].value, 10);
+  var allowedGuests = OFFER_ROOMS_CAPACITY[selectedRooms];
+
+  // sync initial settings
+  noticeFormCapacity.value = selectedRooms;
+
+  if (selectedRooms === 100) {
+    noticeFormCapacity.value = 0;
+  }
+
+  capacityOptions.forEach(function (item) {
+    item.disabled = true;
+  });
+
+  allowedGuests.forEach(function (item) {
+    for (var i = 0; i < capacityOptions.length; i++) {
+      if (capacityOptions[i].value === item) {
+        capacityOptions[i].disabled = false;
+      }
+    }
+  });
+};
+
+noticeFormType.addEventListener('change', function () {
+  updatePrice();
+});
+
+noticeFormTimein.addEventListener('change', function () {
+  noticeFormTimeout.value = noticeFormTimein.value;
+});
+
+noticeFormTimeout.addEventListener('change', function () {
+  noticeFormTimein.value = noticeFormTimeout.value;
+});
+
+noticeFormRooms.addEventListener('change', function () {
+  updateCapacity();
+});
 
 var activatePage = function () {
   noticeFormElement.classList.remove('notice__form--disabled');
   mapElement.classList.remove('map--faded');
   enableFormFields();
+  fillDefaultAddress();
   showSimilarOffers();
+  updateCapacity();
 };
 
 var disablePage = function () {
   disableFormFields();
-  fillDefaultAddress();
 };
-
 
 mainPinElement.addEventListener('mouseup', function () {
   activatePage();
