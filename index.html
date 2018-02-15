@@ -85,7 +85,7 @@
   <div class="notice">
     <h2 class="notice__title">Ваше объявление</h2>
 
-    <form class="notice__form notice__form--disabled" method="post" enctype="multipart/form-data" autocomplete="off">
+    <form class="notice__form notice__form--disabled" action="https://js.dump.academy/keksobooking" method="post" enctype="multipart/form-data" autocomplete="off">
       <fieldset class="notice__header">
         <legend>Ваша фотография (для карты)</legend>
         <div class="notice__photo">
@@ -102,12 +102,12 @@
 
       <fieldset class="form__element form__element--wide">
         <label for="title">Заголовок объявления</label>
-        <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио">
+        <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио" minlength="30" maxlength="100" required>
       </fieldset>
 
       <fieldset class="form__element form__element--wide">
         <label for="address">Адрес</label>
-        <input id="address" name="address" type="text">
+        <input id="address" name="address" type="text" readonly>
       </fieldset>
 
       <fieldset class="form__element">
@@ -122,7 +122,7 @@
 
       <fieldset class="form__element">
         <label for="price">Цена за ночь, руб.</label>
-        <input id="price" name="price" type="number" placeholder="5000">
+        <input id="price" name="price" type="number" placeholder="1000" step="1000" max="1000000" required>
       </fieldset>
 
       <fieldset class="form__element">
@@ -142,10 +142,10 @@
       <fieldset class="form__element">
         <label for="room_number">Кол-во комнат</label>
         <select id="room_number" name="rooms">
-          <option value="1" selected>1 комната</option>
-          <option value="2">2 комнаты</option>
-          <option value="3">3 комнаты</option>
-          <option value="100">100 комнат</option>
+          <option value="1">1 комната</option>
+          <option value="2" >2 комнаты</option>
+          <option value="3" selected>3 комнаты</option>
+          <option value="100" >100 комнат</option>
         </select>
       </fieldset>
 
