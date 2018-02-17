@@ -203,19 +203,23 @@ var renderOfferPopup = function (ad) {
   return offerPopup;
 };
 
-var pinContainer = document.createDocumentFragment();
 // Generate pins
-var renderOffers = function (container, offers) {
+var renderOffers = function (offers) {
+  var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
+  var pins = document.createDocumentFragment();
+
   for (var i = 0; i < offers.length; i++) {
-    var pinElement = container.cloneNode(true);
+    var pin = pinTemplate.cloneNode(true);
     var pinLeft = (offers[i].location.x - MAP_PIN_WIDTH / 2) + 'px';
     var pinTop = (offers[i].location.y - MAP_PIN_HEIGTH) + 'px';
 
-    pinElement.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
-    pinElement.querySelector('img').setAttribute('src', offers[i].author.avatar);
-    pinElement.setAttribute('data-pin', i);
-    pinContainer.appendChild(pinElement);
+    pin.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
+    pin.querySelector('img').setAttribute('src', offers[i].author.avatar);
+    pin.setAttribute('data-pin', i);
+    pins.appendChild(pin);
   }
+
+  return pins;
 };
 
 // DOM elements
@@ -223,11 +227,11 @@ var fragment = document.createDocumentFragment();
 var mapElement = document.querySelector('.map');
 var mainPinElement = document.querySelector('.map__pin--main');
 var mapPinsElement = document.querySelector('.map__pins');
-var mapPinElement = document.querySelector('template').content.querySelector('.map__pin');
 var mapFiltersElement = document.querySelector('.map__filters-container');
 var noticeFormElement = document.querySelector('.notice__form');
 var noticeFormResetElement = noticeFormElement.querySelector('.form__reset');
 var noticeFieldsetElement = noticeFormElement.querySelectorAll('fieldset');
+var noticeFormTitle = noticeFormElement.querySelector('#title');
 var noticeFormType = noticeFormElement.querySelector('#type');
 var noticeFormPrice = noticeFormElement.querySelector('#price');
 var noticeFormTimein = noticeFormElement.querySelector('#timein');
@@ -237,12 +241,11 @@ var noticeFormCapacity = noticeFormElement.querySelector('#capacity');
 var capacityOptions = noticeFormCapacity.querySelectorAll('option');
 
 // Generate 8 test offers
-var ads = generateOffers(8);
+var testOffers = generateOffers(8);
 
 // Show generated pins on map
 var showOffersOnMap = function () {
-  renderOffers(mapPinElement, ads);
-  mapPinsElement.appendChild(pinContainer);
+  mapPinsElement.appendChild(renderOffers(testOffers));
 };
 
 // Hide generated pins when page is inactive
@@ -255,12 +258,12 @@ var hideOffersOnMap = function () {
 
 // Show popup with offer details
 var showOfferInfo = function (index) {
-  hideSelectedOfferInfo();
-  fragment.appendChild(renderOfferPopup(ads[index]));
+  hideOfferInfo();
+  fragment.appendChild(renderOfferPopup(testOffers[index]));
   mapElement.insertBefore(fragment, mapFiltersElement);
 };
 
-var hideSelectedOfferInfo = function () {
+var hideOfferInfo = function () {
   var offerInfo = document.querySelector('.map__card');
   if (offerInfo) {
     offerInfo.parentNode.removeChild(offerInfo);
@@ -303,7 +306,7 @@ var fillDefaultAddress = function () {
 var resetFormValues = function () {
   noticeFormElement.reset();
   updatePrice();
-  hideSelectedOfferInfo();
+  hideOfferInfo();
 };
 
 // validation & sync fields
@@ -356,6 +359,27 @@ disablePage();
 
 // event listeners
 mapElement.addEventListener('click', mapClickHandler, true);
+
+noticeFormTitle.addEventListener('invalid', function () {
+  if (noticeFormTitle.validity.valueMissing) {
+    noticeFormTitle.setCustomValidity('Введите заголовок!');
+    noticeFormTitle.style.border = '2px solid red';
+  } else if (noticeFormTitle.validity.tooShort) {
+    noticeFormTitle.setCustomValidity('Слишком короткий заголовок - минимум 30 символов!');
+    noticeFormTitle.style.border = '2px solid red';
+  } else if (noticeFormTitle.validity.tooLong) {
+    noticeFormTitle.setCustomValidity('Слишком длинный заголовок - не больше 100 символов!');
+    noticeFormTitle.style.border = '2px solid red';
+  } else {
+    noticeFormTitle.setCustomValidity('');
+    noticeFormTitle.style.border = '1px solid #d9d9d3';
+  }
+});
+
+noticeFormTitle.addEventListener('input', function () {
+  noticeFormTitle.setCustomValidity('');
+  noticeFormTitle.style.border = '1px solid #d9d9d3';
+});
 
 noticeFormType.addEventListener('change', function () {
   updatePrice();
