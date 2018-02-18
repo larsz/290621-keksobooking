@@ -107,7 +107,7 @@
 
       <fieldset class="form__element form__element--wide">
         <label for="address">Адрес</label>
-        <input id="address" name="address" type="text" readonly>
+        <input id="address" name="address" type="text" required readonly>
       </fieldset>
 
       <fieldset class="form__element">
@@ -122,7 +122,7 @@
 
       <fieldset class="form__element">
         <label for="price">Цена за ночь, руб.</label>
-        <input id="price" name="price" type="number" placeholder="1000" step="1000" max="1000000" required>
+        <input id="price" name="price" type="number" placeholder="1000" step="1000" max="1000000" pattern="[-+]?[0-9]" required>
       </fieldset>
 
       <fieldset class="form__element">

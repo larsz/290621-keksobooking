@@ -228,16 +228,17 @@ var mapElement = document.querySelector('.map');
 var mainPinElement = document.querySelector('.map__pin--main');
 var mapPinsElement = document.querySelector('.map__pins');
 var mapFiltersElement = document.querySelector('.map__filters-container');
-var noticeFormElement = document.querySelector('.notice__form');
-var noticeFormResetElement = noticeFormElement.querySelector('.form__reset');
-var noticeFieldsetElement = noticeFormElement.querySelectorAll('fieldset');
-var noticeFormTitle = noticeFormElement.querySelector('#title');
-var noticeFormType = noticeFormElement.querySelector('#type');
-var noticeFormPrice = noticeFormElement.querySelector('#price');
-var noticeFormTimein = noticeFormElement.querySelector('#timein');
-var noticeFormTimeout = noticeFormElement.querySelector('#timeout');
-var noticeFormRooms = noticeFormElement.querySelector('#room_number');
-var noticeFormCapacity = noticeFormElement.querySelector('#capacity');
+var noticeForm = document.querySelector('.notice__form');
+var noticeFormSubmit = noticeForm.querySelector('.form__submit');
+var noticeFormReset = noticeForm.querySelector('.form__reset');
+var noticeFieldset = noticeForm.querySelectorAll('fieldset');
+var noticeFormTitle = noticeForm.querySelector('#title');
+var noticeFormType = noticeForm.querySelector('#type');
+var noticeFormPrice = noticeForm.querySelector('#price');
+var noticeFormTimein = noticeForm.querySelector('#timein');
+var noticeFormTimeout = noticeForm.querySelector('#timeout');
+var noticeFormRooms = noticeForm.querySelector('#room_number');
+var noticeFormCapacity = noticeForm.querySelector('#capacity');
 var capacityOptions = noticeFormCapacity.querySelectorAll('option');
 
 // Generate 8 test offers
@@ -286,14 +287,14 @@ var mapClickHandler = function (evt) {
 };
 
 var enableFormFields = function () {
-  for (var i = 0; i < noticeFieldsetElement.length; i++) {
-    noticeFieldsetElement[i].disabled = false;
+  for (var i = 0; i < noticeFieldset.length; i++) {
+    noticeFieldset[i].disabled = false;
   }
 };
 
 var disableFormFields = function () {
-  for (var i = 0; i < noticeFieldsetElement.length; i++) {
-    noticeFieldsetElement[i].disabled = true;
+  for (var i = 0; i < noticeFieldset.length; i++) {
+    noticeFieldset[i].disabled = true;
   }
 };
 
@@ -303,8 +304,8 @@ var fillDefaultAddress = function () {
   addressFieldElement.value = mainPinRect.x + ', ' + mainPinRect.y;
 };
 
-var resetFormValues = function () {
-  noticeFormElement.reset();
+var resetForm = function () {
+  noticeForm.reset();
   updatePrice();
   hideOfferInfo();
 };
@@ -336,51 +337,7 @@ var updateCapacity = function () {
   });
 };
 
-// page active & inactive states
-var activatePage = function () {
-  noticeFormElement.classList.remove('notice__form--disabled');
-  mapElement.classList.remove('map--faded');
-  showOffersOnMap();
-  enableFormFields();
-  fillDefaultAddress();
-};
-
-var disablePage = function () {
-  noticeFormElement.classList.add('notice__form--disabled');
-  mapElement.classList.add('map--faded');
-  fillDefaultAddress();
-  hideOffersOnMap();
-  disableFormFields();
-  resetFormValues();
-};
-
-// turn page to inactive state on load
-disablePage();
-
 // event listeners
-mapElement.addEventListener('click', mapClickHandler, true);
-
-noticeFormTitle.addEventListener('invalid', function () {
-  if (noticeFormTitle.validity.valueMissing) {
-    noticeFormTitle.setCustomValidity('Введите заголовок!');
-    noticeFormTitle.style.border = '2px solid red';
-  } else if (noticeFormTitle.validity.tooShort) {
-    noticeFormTitle.setCustomValidity('Слишком короткий заголовок - минимум 30 символов!');
-    noticeFormTitle.style.border = '2px solid red';
-  } else if (noticeFormTitle.validity.tooLong) {
-    noticeFormTitle.setCustomValidity('Слишком длинный заголовок - не больше 100 символов!');
-    noticeFormTitle.style.border = '2px solid red';
-  } else {
-    noticeFormTitle.setCustomValidity('');
-    noticeFormTitle.style.border = '1px solid #d9d9d3';
-  }
-});
-
-noticeFormTitle.addEventListener('input', function () {
-  noticeFormTitle.setCustomValidity('');
-  noticeFormTitle.style.border = '1px solid #d9d9d3';
-});
-
 noticeFormType.addEventListener('change', function () {
   updatePrice();
 });
@@ -397,10 +354,91 @@ noticeFormRooms.addEventListener('change', function () {
   updateCapacity();
 });
 
-noticeFormResetElement.addEventListener('click', function () {
+noticeFormReset.addEventListener('click', function () {
   disablePage();
+});
+
+var validateTitle = function () {
+  if (noticeFormTitle.validity.valueMissing) {
+    noticeFormTitle.setCustomValidity('Введите заголовок!');
+    noticeFormTitle.style.borderColor = 'red';
+  } else if (noticeFormTitle.validity.tooShort) {
+    noticeFormTitle.setCustomValidity('Слишком короткий заголовок - минимум 30 символов!');
+    noticeFormTitle.style.borderColor = 'red';
+  } else if (noticeFormTitle.validity.tooLong) {
+    noticeFormTitle.setCustomValidity('Слишком длинный заголовок - не больше 100 символов!');
+    noticeFormTitle.style.borderColor = 'red';
+  } else {
+    noticeFormTitle.setCustomValidity('');
+    noticeFormTitle.style.borderColor = '#d9d9d3';
+  }
+
+  noticeFormTitle.addEventListener('input', function () {
+    noticeFormTitle.setCustomValidity('');
+    noticeFormTitle.style.borderColor = '#d9d9d3';
+  });
+
+};
+
+var validatePrice = function () {
+  if (noticeFormPrice.validity.valueMissing) {
+    noticeFormPrice.setCustomValidity('Укажите цену');
+    noticeFormPrice.style.borderColor = 'red';
+  } else if (noticeFormPrice.validity.rangeOverflow) {
+    noticeFormPrice.setCustomValidity('Слишком много! Цена не должна быть выше 1 млн');
+    noticeFormPrice.style.borderColor = 'red';
+  } else if (noticeFormPrice.validity.rangeUnderflow) {
+    noticeFormPrice.setCustomValidity('Маловато! Минимальная цена: ' + noticeFormPrice.min);
+    noticeFormPrice.style.borderColor = 'red';
+  } else {
+    noticeFormTitle.setCustomValidity('');
+    noticeFormTitle.style.borderColor = '#d9d9d3';
+  }
+
+  noticeFormPrice.addEventListener('input', function () {
+    noticeFormPrice.setCustomValidity('');
+    noticeFormPrice.style.borderColor = '#d9d9d3';
+  });
+
+};
+
+noticeFormTitle.addEventListener('blur', function () {
+  validateTitle();
+});
+
+noticeFormPrice.addEventListener('blur', function () {
+  validatePrice();
+});
+
+noticeFormSubmit.addEventListener('click', function () {
+  validateTitle();
+  validatePrice();
 });
 
 mainPinElement.addEventListener('mouseup', function () {
   activatePage();
 });
+
+
+// page active & inactive states
+var activatePage = function () {
+  noticeForm.classList.remove('notice__form--disabled');
+  mapElement.classList.remove('map--faded');
+  mapElement.addEventListener('click', mapClickHandler, true);
+  showOffersOnMap();
+  enableFormFields();
+  fillDefaultAddress();
+};
+
+var disablePage = function () {
+  noticeForm.classList.add('notice__form--disabled');
+  mapElement.classList.add('map--faded');
+  mapElement.removeEventListener('click', mapClickHandler, true);
+  fillDefaultAddress();
+  hideOffersOnMap();
+  disableFormFields();
+  resetForm();
+};
+
+// turn page to inactive state on load
+disablePage();
