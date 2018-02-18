@@ -271,21 +271,6 @@ var hideOfferInfo = function () {
   }
 };
 
-// Event handlers
-// Pin Click Handler
-var mapClickHandler = function (evt) {
-  var clickedElement = evt.target;
-  if (!clickedElement.hasAttribute('data-pin')) {
-    clickedElement = clickedElement.parentElement;
-  }
-
-  var clickedIndex = clickedElement.getAttribute('data-pin');
-
-  if (clickedIndex) {
-    showOfferInfo(clickedIndex);
-  }
-};
-
 var enableFormFields = function () {
   for (var i = 0; i < noticeFieldset.length; i++) {
     noticeFieldset[i].disabled = false;
@@ -308,6 +293,33 @@ var resetForm = function () {
   noticeForm.reset();
   updatePrice();
   hideOfferInfo();
+};
+
+// Event handlers
+// Map Click Handler
+var mapClickHandler = function (evt) {
+  var clickedElement = evt.target;
+  if (!clickedElement.hasAttribute('data-pin')) {
+    clickedElement = clickedElement.parentElement;
+  }
+
+  var clickedIndex = clickedElement.getAttribute('data-pin');
+
+  if (clickedIndex) {
+    showOfferInfo(clickedIndex);
+  }
+};
+
+var resetClickHandler = function () {
+  disablePage();
+};
+
+var offerTypeChangeHandler = function () {
+  updatePrice();
+};
+
+var offerRoomsChangeHandler = function () {
+  updateCapacity();
 };
 
 // validation & sync fields
@@ -337,11 +349,6 @@ var updateCapacity = function () {
   });
 };
 
-// event listeners
-noticeFormType.addEventListener('change', function () {
-  updatePrice();
-});
-
 noticeFormTimein.addEventListener('change', function () {
   noticeFormTimeout.value = noticeFormTimein.value;
 });
@@ -350,13 +357,6 @@ noticeFormTimeout.addEventListener('change', function () {
   noticeFormTimein.value = noticeFormTimeout.value;
 });
 
-noticeFormRooms.addEventListener('change', function () {
-  updateCapacity();
-});
-
-noticeFormReset.addEventListener('click', function () {
-  disablePage();
-});
 
 var validateTitle = function () {
   if (noticeFormTitle.validity.valueMissing) {
@@ -419,12 +419,14 @@ mainPinElement.addEventListener('mouseup', function () {
   activatePage();
 });
 
-
 // page active & inactive states
 var activatePage = function () {
   noticeForm.classList.remove('notice__form--disabled');
   mapElement.classList.remove('map--faded');
   mapElement.addEventListener('click', mapClickHandler, true);
+  noticeFormType.addEventListener('change', offerTypeChangeHandler);
+  noticeFormRooms.addEventListener('change', offerRoomsChangeHandler);
+  noticeFormReset.addEventListener('click', resetClickHandler);
   showOffersOnMap();
   enableFormFields();
   fillDefaultAddress();
@@ -434,6 +436,9 @@ var disablePage = function () {
   noticeForm.classList.add('notice__form--disabled');
   mapElement.classList.add('map--faded');
   mapElement.removeEventListener('click', mapClickHandler, true);
+  noticeFormType.removeEventListener('change', offerTypeChangeHandler);
+  noticeFormRooms.removeEventListener('change', offerRoomsChangeHandler);
+  noticeFormReset.removeEventListener('click', resetClickHandler);
   fillDefaultAddress();
   hideOffersOnMap();
   disableFormFields();
