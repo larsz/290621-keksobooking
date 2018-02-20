@@ -44,6 +44,7 @@
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
 
+  var OFFERS_QUANTITY = 8;
   var PRICE_MIN = 1000;
   var PRICE_MAX = 1000000;
   var ROOMS_MIN = 1;
@@ -53,11 +54,8 @@
   var LOCATION_X_MAX = 900;
   var LOCATION_Y_MIN = 150;
   var LOCATION_Y_MAX = 500;
-  var MAP_PIN_WIDTH = 50;
-  var MAP_PIN_HEIGTH = 70;
   var AVATAR_PATH = 'img/avatars/user';
 
-  // specific functions
   var getUserAvatar = function (avatarId) {
     var avatarIndex = avatarId + 1;
 
@@ -101,4 +99,6 @@
     }
     return data;
   };
+
+  window.offersData = generateOffers(OFFERS_QUANTITY);
 })();

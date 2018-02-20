@@ -3,6 +3,9 @@
 'use strict';
 
 (function () {
+  var MAP_PIN_WIDTH = 50;
+  var MAP_PIN_HEIGTH = 70;
+
   var renderOffers = function (offers) {
     var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
     var pins = document.createDocumentFragment();
@@ -19,7 +22,9 @@
     }
 
     return pins;
-  }
+  };
+
+  window.pins = renderOffers(window.offersData);
 })();
 
 
