@@ -21,8 +21,24 @@ window.map = (function () {
     }
   };
 
+  // Close button handlers
+  var popupCloseClickHandler = function () {
+    window.map.hideOfferInfo();
+  };
+
+  var popupCloseKeyDownHandler = function (evt) {
+    window.utils.isEnterEvent(evt, window.map.hideOfferInfo);
+  };
+
+  var popUpEscHandler = function (evt) {
+    window.utils.isEscEvent(evt, window.map.hideOfferInfo);
+  };
+
+  // Show Offer Popup
   mapElement.addEventListener('click', mapClickHandler, true);
 
+  // Hide Offer Popup on ESC
+  mapElement.addEventListener('keydown', popUpEscHandler, true);
 
   return {
     hideOffersOnMap: function () {
@@ -30,6 +46,7 @@ window.map = (function () {
       pins.forEach(function (item) {
         item.parentNode.removeChild(item);
       });
+      mapElement.removeEventListener('keydown', popUpEscHandler, true);
     },
     showOffersOnMap: function () {
       mapPinsElement.appendChild(window.pins);
@@ -38,12 +55,16 @@ window.map = (function () {
       var offerInfo = document.querySelector('.map__card');
       if (offerInfo) {
         offerInfo.parentNode.removeChild(offerInfo);
+        mapElement.removeEventListener('keydown', popUpEscHandler);
       }
     },
     showOfferInfo: function (index) {
       window.map.hideOfferInfo();
       fragment.appendChild(window.renderOfferPopup(window.offersData[index]));
       mapElement.insertBefore(fragment, mapFiltersElement);
+      var offerInfoCloseElement = document.querySelector('.popup__close');
+      offerInfoCloseElement.addEventListener('click', popupCloseClickHandler);
+      offerInfoCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
     }
   };
 })();
