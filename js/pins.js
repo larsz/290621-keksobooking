@@ -1,4 +1,4 @@
-// Module for render pins
+// Module for render similar offer pins on map
 
 'use strict';
 
