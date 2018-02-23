@@ -137,11 +137,11 @@ window.form = (function () {
 
   };
 
-  noticeFormTitle.addEventListener('blur', function () {
+  noticeFormTitle.addEventListener('keyup', function () {
     validateTitle();
   });
 
-  noticeFormPrice.addEventListener('blur', function () {
+  noticeFormPrice.addEventListener('keyup', function () {
     validatePrice();
   });
 

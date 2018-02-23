@@ -8,6 +8,8 @@ window.map = (function () {
   var MAP_HORIZONT_TOP = 150;
   var MAP_HORIZONT_BOTTOM = 500;
   var MAIN_PIN_ARROW_CORRECTION = 50;
+  var MAP_PIN_WIDTH = 50;
+  var MAP_PIN_HEIGTH = 70;
 
   // DOM elements
   var fragment = document.createDocumentFragment();
@@ -27,24 +29,34 @@ window.map = (function () {
     bottom: MAP_HORIZONT_BOTTOM - MAIN_PIN_ARROW_CORRECTION
   };
 
-  var hideOffersOnMap = function () {
-    var pins = mapPinsElement.querySelectorAll('.map__pin:not(.map__pin--main)');
-    pins.forEach(function (item) {
-      item.parentNode.removeChild(item);
-    });
-    mapElement.removeEventListener('keydown', popUpEscHandler);
+  var renderOffers = function (offers) {
+    var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
+    var pins = document.createDocumentFragment();
+
+    for (var i = 0; i < offers.length; i++) {
+      var pin = pinTemplate.cloneNode(true);
+      var pinLeft = (offers[i].location.x - MAP_PIN_WIDTH / 2) + 'px';
+      var pinTop = (offers[i].location.y - MAP_PIN_HEIGTH) + 'px';
+
+      pin.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
+      pin.querySelector('img').setAttribute('src', offers[i].author.avatar);
+      pin.setAttribute('data-pin', i);
+      pins.appendChild(pin);
+    }
+
+    return pins;
   };
 
   var showOffersOnMap = function (data) {
     mapPinsElement.appendChild(data);
   };
 
-  var hideOfferInfo = function () {
-    var offerInfo = document.querySelector('.map__card');
-    if (offerInfo) {
-      offerInfo.parentNode.removeChild(offerInfo);
-      mapElement.removeEventListener('keydown', popUpEscHandler);
-    }
+  var hideOffersOnMap = function () {
+    var pins = mapPinsElement.querySelectorAll('.map__pin:not(.map__pin--main)');
+    pins.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+    mapElement.removeEventListener('keydown', popUpEscHandler);
   };
 
   var showOfferInfo = function (index) {
@@ -54,6 +66,14 @@ window.map = (function () {
     var offerInfoCloseElement = document.querySelector('.popup__close');
     offerInfoCloseElement.addEventListener('click', popupCloseClickHandler);
     offerInfoCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
+  };
+
+  var hideOfferInfo = function () {
+    var offerInfo = document.querySelector('.map__card');
+    if (offerInfo) {
+      offerInfo.parentNode.removeChild(offerInfo);
+      mapElement.removeEventListener('keydown', popUpEscHandler);
+    }
   };
 
   // Handlers
@@ -110,24 +130,22 @@ window.map = (function () {
         left: mainPinElement.offsetLeft - shift.x
       };
 
-      if (!isPageDisabled) {
-        // vertical move
-        if (shiftedPinPosition.top > mapLimits.bottom) {
-          mainPinElement.style.top = mapLimits.bottom + 'px';
-        } else if (shiftedPinPosition.top < mapLimits.top) {
-          mainPinElement.style.top = mapLimits.top + 'px';
-        } else {
-          mainPinElement.style.top = shiftedPinPosition.top + 'px';
-        }
+      // vertical move
+      if (shiftedPinPosition.top > mapLimits.bottom) {
+        mainPinElement.style.top = mapLimits.bottom + 'px';
+      } else if (shiftedPinPosition.top < mapLimits.top) {
+        mainPinElement.style.top = mapLimits.top + 'px';
+      } else {
+        mainPinElement.style.top = shiftedPinPosition.top + 'px';
+      }
 
-        // horizontal move
-        if (shiftedPinPosition.left > mapLimits.right) {
-          mainPinElement.style.left = mapLimits.right + 'px';
-        } else if (shiftedPinPosition.left < mapLimits.left) {
-          mainPinElement.style.left = mapLimits.left + 'px';
-        } else {
-          mainPinElement.style.left = shiftedPinPosition.left + 'px';
-        }
+      // horizontal move
+      if (shiftedPinPosition.left > mapLimits.right) {
+        mainPinElement.style.left = mapLimits.right + 'px';
+      } else if (shiftedPinPosition.left < mapLimits.left) {
+        mainPinElement.style.left = mapLimits.left + 'px';
+      } else {
+        mainPinElement.style.left = shiftedPinPosition.left + 'px';
       }
     };
 
@@ -163,7 +181,7 @@ window.map = (function () {
   };
   var activatePage = function () {
     mapElement.classList.remove('map--faded');
-    var pins = window.pins;
+    var pins = renderOffers(window.offersData);
     showOffersOnMap(pins);
     window.form.enableForm();
     isPageDisabled = false;
