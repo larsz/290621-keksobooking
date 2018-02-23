@@ -73,6 +73,8 @@ window.form = (function () {
   var resetForm = function () {
     noticeForm.reset();
     updatePrice();
+    noticeFormTitle.style.borderColor = '#d9d9d3';
+    noticeFormPrice.style.borderColor = '#d9d9d3';
   };
 
   var offerTypeChangeHandler = function () {
@@ -143,16 +145,14 @@ window.form = (function () {
     validatePrice();
   });
 
-
   noticeFormSubmit.addEventListener('click', function () {
     validateTitle();
     validatePrice();
   });
 
   noticeFormReset.addEventListener('click', function () {
-    window.pageStates.disablePage();
+    window.map.disablePage();
   });
-
 
   return {
     updateAddress: function (x, y) {

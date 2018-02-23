@@ -23,7 +23,6 @@
 
     return pins;
   };
-
   window.pins = renderOffers(window.offersData);
 })();
 
