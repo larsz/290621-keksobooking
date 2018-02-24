@@ -17,10 +17,11 @@ window.form = (function () {
     palace: {minPrice: 10000}
   };
 
-  var mainPinElement = document.querySelector('.map__pin--main');
   var noticeForm = document.querySelector('.notice__form');
   var noticeFormSubmit = noticeForm.querySelector('.form__submit');
+  var noticeFormReset = noticeForm.querySelector('.form__reset');
   var noticeFieldset = noticeForm.querySelectorAll('fieldset');
+  var noticeFormAddress = document.querySelector('#address');
   var noticeFormTitle = noticeForm.querySelector('#title');
   var noticeFormType = noticeForm.querySelector('#type');
   var noticeFormPrice = noticeForm.querySelector('#price');
@@ -69,15 +70,11 @@ window.form = (function () {
     });
   };
 
-  var fillDefaultAddress = function () {
-    var addressFieldElement = document.getElementById('address');
-    var mainPinRect = mainPinElement.getBoundingClientRect();
-    addressFieldElement.value = mainPinRect.x + ', ' + mainPinRect.y;
-  };
-
   var resetForm = function () {
     noticeForm.reset();
     updatePrice();
+    noticeFormTitle.style.borderColor = '#d9d9d3';
+    noticeFormPrice.style.borderColor = '#d9d9d3';
   };
 
   var offerTypeChangeHandler = function () {
@@ -140,26 +137,31 @@ window.form = (function () {
 
   };
 
-  noticeFormTitle.addEventListener('blur', function () {
+  noticeFormTitle.addEventListener('keyup', function () {
     validateTitle();
   });
 
-  noticeFormPrice.addEventListener('blur', function () {
+  noticeFormPrice.addEventListener('keyup', function () {
     validatePrice();
   });
-
 
   noticeFormSubmit.addEventListener('click', function () {
     validateTitle();
     validatePrice();
   });
 
+  noticeFormReset.addEventListener('click', function () {
+    window.map.disablePage();
+  });
+
   return {
+    updateAddress: function (x, y) {
+      noticeFormAddress.value = x + ', ' + y;
+    },
     disableForm: function () {
       noticeForm.classList.add('notice__form--disabled');
       noticeFormType.removeEventListener('change', offerTypeChangeHandler);
       noticeFormRooms.removeEventListener('change', offerRoomsChangeHandler);
-      fillDefaultAddress();
       disableFormFields();
       resetForm();
     },
@@ -168,7 +170,6 @@ window.form = (function () {
       noticeFormType.addEventListener('change', offerTypeChangeHandler);
       noticeFormRooms.addEventListener('change', offerRoomsChangeHandler);
       enableFormFields();
-      fillDefaultAddress();
     }
   };
 })();
