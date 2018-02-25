@@ -19,6 +19,7 @@
   var pluralizeRooms = function (roomsNumber) {
     switch (roomsNumber) {
       case 1 : return roomsNumber + ' комната для ';
+      case 0 :
       case 5 : return roomsNumber + ' комнат для ';
       default: return roomsNumber + ' комнаты для ';
     }
