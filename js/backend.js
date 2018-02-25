@@ -2,8 +2,8 @@
 
 (function () {
 
-  var SAVE_URL = 'https://87458458js.dump.academy/keksobooking/';
-  var LOAD_URL = 'https://js.dump.academy/keksobooking/data/';
+  var SAVE_URL = 'https://js.dump.academy/keksobooking/';
+  var LOAD_URL = 'https://js.dump.academy/keksobooking/data/8774/4454544';
 
   var Code = {
     SUCCESS: 200,
@@ -51,23 +51,6 @@
     return xhr;
   };
 
-  var errorHandler = function (errorMessage) {
-    var errorBox = document.createElement('div');
-    errorBox.classList.add('error-message');
-    var closeBtn = document.createElement('button');
-    closeBtn.textContent = 'Закрыть';
-    closeBtn.classList.add('popup__close');
-
-    errorBox.textContent = errorMessage;
-    errorBox.appendChild(closeBtn);
-
-    closeBtn.addEventListener('click', function (evt) {
-      evt.target.parentNode.remove();
-    });
-
-    document.body.insertAdjacentElement('afterbegin', errorBox);
-  };
-
   var load = function (onLoad, onError) {
     var xhr = initXHR(onLoad, onError);
     xhr.open('GET', LOAD_URL);
@@ -82,7 +65,6 @@
 
   window.backend = {
     load: load,
-    save: save,
-    errorHandler: errorHandler
+    save: save
   };
 })();

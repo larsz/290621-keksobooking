@@ -77,6 +77,7 @@ window.form = (function () {
   };
 
   var succesSubmitFormHandler = function () {
+    window.notification.showMessage();
     window.map.disablePage();
   };
 
@@ -149,11 +150,9 @@ window.form = (function () {
   });
 
   noticeForm.addEventListener('submit', function (evt) {
-    validateTitle();
-    validatePrice();
     evt.preventDefault();
     var formData = new FormData(noticeForm);
-    window.backend.save(formData, succesSubmitFormHandler, window.backend.errorHandler);
+    window.backend.save(formData, succesSubmitFormHandler, window.notification.throwError);
   });
 
   noticeFormReset.addEventListener('click', function () {

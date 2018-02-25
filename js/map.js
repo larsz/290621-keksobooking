@@ -187,6 +187,7 @@ window.map = (function () {
   };
   var activatePage = function () {
     mapElement.classList.remove('map--faded');
+    window.notification.hideMessages();
     var renderedPins = renderOffers(loadedOffers);
     showOffersOnMap(renderedPins);
     window.form.enableForm();
@@ -196,8 +197,7 @@ window.map = (function () {
   // set default address on page load
   window.form.updateAddress(initialPinX, initialPinY);
 
-  // load data
-  window.backend.load(succesLoadDataHandler, window.backend.errorHandler);
+  window.backend.load(succesLoadDataHandler, window.notification.throwError);
 
   return {
     disablePage: disablePage,
