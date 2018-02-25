@@ -3,7 +3,7 @@
 (function () {
 
   var SAVE_URL = 'https://js.dump.academy/keksobooking/';
-  var LOAD_URL = 'https://js.dump.academy/keksobooking/data/8774/4454544';
+  var LOAD_URL = 'https://js.dump.academy/keksobooking/data/';
 
   var Code = {
     SUCCESS: 200,
