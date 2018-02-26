@@ -854,3 +854,38 @@ textarea:focus
 {
     background-position: -10px -10px;
 }
+
+.notification {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  margin: 0 auto;
+  padding: 4px 0;
+  font-size: 21px;
+  line-height: 1.5;
+  text-align: center;
+  color: #fff;
+}
+.error + .error,
+.success + .error {
+  top: 42px;
+}
+.notification .popup__close {
+  top: 5px;
+  bottom: auto;
+  margin: 0;
+  cursor: pointer;
+}
+.notification .popup__close:after {
+  color: #fff;
+  font-size: 30px;
+  line-height: 30px;
+}
+.success.notification {
+  background-color: green;
+}
+.error.notification {
+  background-color: red;
+};

@@ -18,7 +18,6 @@ window.form = (function () {
   };
 
   var noticeForm = document.querySelector('.notice__form');
-  var noticeFormSubmit = noticeForm.querySelector('.form__submit');
   var noticeFormReset = noticeForm.querySelector('.form__reset');
   var noticeFieldset = noticeForm.querySelectorAll('fieldset');
   var noticeFormAddress = document.querySelector('#address');
@@ -75,6 +74,11 @@ window.form = (function () {
     updatePrice();
     noticeFormTitle.style.borderColor = '#d9d9d3';
     noticeFormPrice.style.borderColor = '#d9d9d3';
+  };
+
+  var succesSubmitFormHandler = function () {
+    window.notification.showInfo();
+    window.map.disablePage();
   };
 
   var offerTypeChangeHandler = function () {
@@ -145,9 +149,10 @@ window.form = (function () {
     validatePrice();
   });
 
-  noticeFormSubmit.addEventListener('click', function () {
-    validateTitle();
-    validatePrice();
+  noticeForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    var formData = new FormData(noticeForm);
+    window.backend.save(formData, succesSubmitFormHandler, window.notification.showError);
   });
 
   noticeFormReset.addEventListener('click', function () {

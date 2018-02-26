@@ -22,6 +22,8 @@ window.map = (function () {
   var initialPinY = mainPinElement.offsetTop + MAIN_PIN_ARROW_CORRECTION;
   var isPageDisabled = true;
 
+  var loadedOffers = [];
+
   var mapLimits = {
     left: 0,
     right: mapElement.offsetWidth,
@@ -61,7 +63,7 @@ window.map = (function () {
 
   var showOfferInfo = function (index) {
     hideOfferInfo();
-    fragment.appendChild(window.renderOfferPopup(window.offersData[index]));
+    fragment.appendChild(window.renderOfferPopup(loadedOffers[index]));
     mapElement.insertBefore(fragment, mapFiltersElement);
     var offerInfoCloseElement = document.querySelector('.popup__close');
     offerInfoCloseElement.addEventListener('click', popupCloseClickHandler);
@@ -99,6 +101,10 @@ window.map = (function () {
 
   var popUpEscHandler = function (evt) {
     window.utils.isEscEvent(evt, hideOfferInfo);
+  };
+
+  var succesLoadDataHandler = function (loadedData) {
+    loadedOffers = loadedData;
   };
 
   // Event Listeners
@@ -181,14 +187,17 @@ window.map = (function () {
   };
   var activatePage = function () {
     mapElement.classList.remove('map--faded');
-    var pins = renderOffers(window.offersData);
-    showOffersOnMap(pins);
+    window.notification.hideAll();
+    var renderedPins = renderOffers(loadedOffers);
+    showOffersOnMap(renderedPins);
     window.form.enableForm();
     isPageDisabled = false;
   };
 
   // set default address on page load
   window.form.updateAddress(initialPinX, initialPinY);
+
+  window.backend.load(succesLoadDataHandler, window.notification.showError);
 
   return {
     disablePage: disablePage,
