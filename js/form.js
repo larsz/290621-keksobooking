@@ -77,7 +77,7 @@ window.form = (function () {
   };
 
   var succesSubmitFormHandler = function () {
-    window.notification.showMessage();
+    window.notification.showInfo();
     window.map.disablePage();
   };
 
@@ -152,7 +152,7 @@ window.form = (function () {
   noticeForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     var formData = new FormData(noticeForm);
-    window.backend.save(formData, succesSubmitFormHandler, window.notification.throwError);
+    window.backend.save(formData, succesSubmitFormHandler, window.notification.showError);
   });
 
   noticeFormReset.addEventListener('click', function () {

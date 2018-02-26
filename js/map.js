@@ -104,7 +104,7 @@ window.map = (function () {
   };
 
   var succesLoadDataHandler = function (loadedData) {
-    loadedOffers = loadedData.slice(0);
+    loadedOffers = loadedData;
   };
 
   // Event Listeners
@@ -187,7 +187,7 @@ window.map = (function () {
   };
   var activatePage = function () {
     mapElement.classList.remove('map--faded');
-    window.notification.hideMessages();
+    window.notification.hideAll();
     var renderedPins = renderOffers(loadedOffers);
     showOffersOnMap(renderedPins);
     window.form.enableForm();
@@ -197,7 +197,7 @@ window.map = (function () {
   // set default address on page load
   window.form.updateAddress(initialPinX, initialPinY);
 
-  window.backend.load(succesLoadDataHandler, window.notification.throwError);
+  window.backend.load(succesLoadDataHandler, window.notification.showError);
 
   return {
     disablePage: disablePage,

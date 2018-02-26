@@ -37,8 +37,8 @@
   };
 
   window.notification = {
-    throwError: throwError,
-    showMessage: showMessage,
-    hideMessages: hideMessages
+    showError: throwError,
+    showInfo: showMessage,
+    hideAll: hideMessages
   };
 })();
