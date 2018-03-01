@@ -31,7 +31,17 @@
     }
   };
 
-  window.renderOfferPopup = function (ad) {
+  var renderFeatures = function (data) {
+    var features = document.createDocumentFragment();
+    for (var i = 0; i < data.length; i++) {
+      var feature = document.createElement('li');
+      feature.classList.add('feature', 'feature--' + data[i]);
+      features.appendChild(feature);
+    }
+    return features;
+  };
+
+  var renderOfferPopup = function (ad) {
     offerPopup.querySelector('h3').textContent = ad.offer.title;
     offerPopup.querySelector('small').textContent = ad.offer.address;
     offerPopup.querySelector('h4').textContent = translateOfferType(ad.offer.type);
@@ -43,15 +53,10 @@
 
     // Render features
     var featuresListElement = offerPopup.querySelector('.popup__features');
-    featuresListElement.innerHTML = '';
+    var offerFeatures = featuresListElement.cloneNode();
 
-    for (var i = 0; i < ad.offer.features.length; i++) {
-      var featuresListItem = document.createElement('li');
-      featuresListItem.classList.add('feature', 'feature--' + ad.offer.features[i]);
-      fragment.appendChild(featuresListItem);
-    }
-
-    featuresListElement.appendChild(fragment);
+    offerFeatures.appendChild(renderFeatures(ad.offer.features));
+    offerPopup.replaceChild(offerFeatures, featuresListElement);
 
     // Render photos
     var photos = offerPopup.querySelector('.popup__pictures');
@@ -59,7 +64,7 @@
       photos.removeChild(photos.firstChild);
     }
 
-    for (i = 0; i < ad.offer.photos.length; i++) {
+    for (var i = 0; i < ad.offer.photos.length; i++) {
       var newPhotos = document.createElement('li');
       var photo = document.createElement('img');
 
@@ -75,4 +80,9 @@
 
     return offerPopup;
   };
+
+  window.offerPopup = {
+    render: renderOfferPopup
+  };
+
 })();

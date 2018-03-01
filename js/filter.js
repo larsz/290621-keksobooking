@@ -60,9 +60,6 @@
   formFiltersElement.addEventListener('change', function (evt) {
     var selectedFilter = evt.target;
 
-    window.map.hideOffersOnMap();
-    window.map.hideOfferInfo();
-
     if (typeof onFilterChangeExternal === 'function') {
       onFilterChangeExternal();
     }

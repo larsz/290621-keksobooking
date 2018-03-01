@@ -65,7 +65,7 @@
 
   var showOfferInfo = function (index) {
     hideOfferInfo();
-    fragment.appendChild(window.renderOfferPopup(loadedOffers[index]));
+    fragment.appendChild(window.offerPopup.render(loadedOffers[index]));
     mapElement.insertBefore(fragment, mapFiltersElement);
     var offerInfoCloseElement = document.querySelector('.popup__close');
     offerInfoCloseElement.addEventListener('click', popupCloseClickHandler);
@@ -201,6 +201,9 @@
   window.backend.load(succesLoadDataHandler, window.notification.showError);
 
   window.filter.setCallback(function () {
+    hideOffersOnMap();
+    hideOfferInfo();
+
     var filteredPins = renderOffers(window.filter.apply(loadedOffers));
     showOffersOnMap(filteredPins);
   });
