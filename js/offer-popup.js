@@ -43,9 +43,7 @@
 
     // Render features
     var featuresListElement = offerPopup.querySelector('.popup__features');
-    while (featuresListElement.firstChild) {
-      featuresListElement.removeChild(featuresListElement.firstChild);
-    }
+    featuresListElement.innerHTML = '';
 
     for (var i = 0; i < ad.offer.features.length; i++) {
       var featuresListItem = document.createElement('li');
