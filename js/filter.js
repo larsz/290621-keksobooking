@@ -60,10 +60,6 @@
   formFiltersElement.addEventListener('change', function (evt) {
     var selectedFilter = evt.target;
 
-    if (typeof onFilterChangeExternal === 'function') {
-      onFilterChangeExternal();
-    }
-
     switch (selectedFilter.getAttribute('id')) {
       case 'housing-type':
         typeFilterValue = selectedFilter.value;
@@ -96,6 +92,11 @@
         conditionerFilterValue = selectedFilter.checked;
         break;
     }
+
+    if (typeof onFilterChangeExternal === 'function') {
+      onFilterChangeExternal();
+    }
+
   });
 
   window.filter = {

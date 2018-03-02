@@ -106,7 +106,7 @@
   };
 
   var succesLoadDataHandler = function (loadedData) {
-    loadedOffers = loadedData;
+    loadedOffers = loadedData.slice(0);
   };
 
   // Event Listeners
@@ -190,8 +190,9 @@
   var activatePage = function () {
     mapElement.classList.remove('map--faded');
     window.notification.hideAll();
-    var renderedPins = renderOffers(loadedOffers);
+    var renderedPins = renderOffers(window.filter.apply(loadedOffers));
     showOffersOnMap(renderedPins);
+
     window.form.enableForm();
     isPageDisabled = false;
   };
@@ -204,14 +205,12 @@
     hideOffersOnMap();
     hideOfferInfo();
 
-    var filteredPins = renderOffers(window.filter.apply(loadedOffers));
-    showOffersOnMap(filteredPins);
+    var updatedPins = renderOffers(window.filter.apply(loadedOffers));
+    showOffersOnMap(updatedPins);
   });
 
   window.map = {
     disablePage: disablePage,
-    activatePage: activatePage,
-    hideOffersOnMap: hideOffersOnMap,
-    hideOfferInfo: hideOfferInfo
+    activatePage: activatePage
   };
 })();
