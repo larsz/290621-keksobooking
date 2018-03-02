@@ -4,8 +4,11 @@
 
 (function () {
   var template = document.querySelector('template').content.querySelector('.map__card');
-  var offerPopup = template.cloneNode(true);
-  var fragment = document.createDocumentFragment();
+
+  var OfferPhoto = {
+    WIDTH: 70,
+    HEIGHT: 70
+  };
 
   var translateOfferType = function (offerType) {
     switch (offerType) {
@@ -31,7 +34,7 @@
     }
   };
 
-  var renderFeatures = function (data) {
+  var getFeatures = function (data) {
     var features = document.createDocumentFragment();
     for (var i = 0; i < data.length; i++) {
       var feature = document.createElement('li');
@@ -41,7 +44,24 @@
     return features;
   };
 
+  var getPhotos = function (data) {
+    var photos = document.createDocumentFragment();
+    for (var i = 0; i < data.length; i++) {
+      var newPhoto = document.createElement('li');
+      var photo = document.createElement('img');
+
+      photo.setAttribute('src', data[i]);
+      photo.width = OfferPhoto.WIDTH;
+      photo.height = OfferPhoto.HEIGHT;
+
+      newPhoto.appendChild(photo);
+      photos.appendChild(newPhoto);
+    }
+    return photos;
+  };
+
   var renderOfferPopup = function (ad) {
+    var offerPopup = template.cloneNode(true);
     offerPopup.querySelector('.popup__title').textContent = ad.offer.title;
     offerPopup.querySelector('.popup__address').textContent = ad.offer.address;
     offerPopup.querySelector('.popup__type').textContent = translateOfferType(ad.offer.type);
@@ -53,30 +73,17 @@
 
     // Render features
     var featuresListElement = offerPopup.querySelector('.popup__features');
-    var offerFeatures = featuresListElement.cloneNode();
-
-    offerFeatures.appendChild(renderFeatures(ad.offer.features));
-    offerPopup.replaceChild(offerFeatures, featuresListElement);
+    while (featuresListElement.firstChild) {
+      featuresListElement.removeChild(featuresListElement.firstChild);
+    }
+    featuresListElement.appendChild(getFeatures(ad.offer.features));
 
     // Render photos
-    var photos = offerPopup.querySelector('.popup__pictures');
-    while (photos.firstChild) {
-      photos.removeChild(photos.firstChild);
+    var photosElement = offerPopup.querySelector('.popup__pictures');
+    while (photosElement.firstChild) {
+      photosElement.removeChild(photosElement.firstChild);
     }
-
-    for (var i = 0; i < ad.offer.photos.length; i++) {
-      var newPhotos = document.createElement('li');
-      var photo = document.createElement('img');
-
-      photo.setAttribute('src', ad.offer.photos[i]);
-      photo.width = '70';
-      photo.height = '70';
-
-      newPhotos.appendChild(photo);
-      fragment.appendChild(newPhotos);
-    }
-
-    photos.appendChild(fragment);
+    photosElement.appendChild(getPhotos(ad.offer.photos));
 
     return offerPopup;
   };
@@ -84,5 +91,4 @@
   window.offerPopup = {
     render: renderOfferPopup
   };
-
 })();

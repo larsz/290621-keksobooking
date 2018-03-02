@@ -30,6 +30,8 @@
   var noticeFormCapacity = noticeForm.querySelector('#capacity');
   var capacityOptions = noticeFormCapacity.querySelectorAll('option');
 
+  var noticeFormControlDefaultStyle = 'd9d9d3';
+
   var enableFormFields = function () {
     for (var i = 0; i < noticeFieldset.length; i++) {
       noticeFieldset[i].disabled = false;
@@ -72,8 +74,8 @@
   var resetForm = function () {
     noticeForm.reset();
     updatePrice();
-    noticeFormTitle.style.borderColor = '#d9d9d3';
-    noticeFormPrice.style.borderColor = '#d9d9d3';
+    noticeFormTitle.style.borderColor = noticeFormControlDefaultStyle;
+    noticeFormPrice.style.borderColor = noticeFormControlDefaultStyle;
   };
 
   var succesSubmitFormHandler = function () {
