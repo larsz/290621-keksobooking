@@ -13,10 +13,11 @@
     SERVER_ERROR: 500
   };
 
+  var TIMEOUT = 10000;
+
   var initXHR = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = 10000; // 10s
 
     xhr.addEventListener('load', function () {
       switch (xhr.status) {
@@ -45,7 +46,7 @@
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс');
+      onError('Запрос не успел выполниться за ' + xhr.TIMEOUT + ' мс');
     });
 
     return xhr;

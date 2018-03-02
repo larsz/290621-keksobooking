@@ -21,7 +21,7 @@
     document.body.insertAdjacentElement('afterbegin', message);
   };
 
-  var throwError = function (errorMessage) {
+  var showError = function (errorMessage) {
     createMessage('error', errorMessage);
   };
 
@@ -37,7 +37,7 @@
   };
 
   window.notification = {
-    showError: throwError,
+    showError: showError,
     showInfo: showMessage,
     hideAll: hideMessages
   };
