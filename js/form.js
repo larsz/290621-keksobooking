@@ -4,17 +4,18 @@
 
 (function () {
 
-  var OFFER_ROOMS_CAPACITY = {
+  var OfferRoomsCapacity = {
     1: ['1'],
     2: ['2', '1'],
     3: ['3', '2', '1'],
     100: ['0']
   };
-  var OFFER_TYPES = {
-    bungalo: {minPrice: 0},
-    flat: {minPrice: 1000},
-    house: {minPrice: 5000},
-    palace: {minPrice: 10000}
+
+  var OfferTypes = {
+    BUNGALO: {minPrice: 0},
+    FLAT: {minPrice: 1000},
+    HOUSE: {minPrice: 5000},
+    PALACE: {minPrice: 10000}
   };
 
   var noticeForm = document.querySelector('.notice__form');
@@ -46,14 +47,14 @@
 
   // validation & sync fields
   var updatePrice = function () {
-    var minPrice = OFFER_TYPES[noticeFormType.value].minPrice;
+    var minPrice = OfferTypes[noticeFormType.value.toUpperCase()].minPrice;
     noticeFormPrice.min = minPrice;
     noticeFormPrice.placeholder = minPrice;
   };
 
   var updateCapacity = function () {
     var selectedRooms = parseInt(noticeFormRooms.options[noticeFormRooms.selectedIndex].value, 10);
-    var allowedGuests = OFFER_ROOMS_CAPACITY[selectedRooms];
+    var allowedGuests = OfferRoomsCapacity[selectedRooms];
 
     // sync initial settings
     noticeFormCapacity.value = selectedRooms;
