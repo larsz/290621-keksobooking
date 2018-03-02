@@ -2,7 +2,7 @@
 
 'use strict';
 
-window.map = (function () {
+(function () {
 
   // Const
   var MAP_HORIZONT_TOP = 150;
@@ -10,6 +10,7 @@ window.map = (function () {
   var MAIN_PIN_ARROW_CORRECTION = 50;
   var MAP_PIN_WIDTH = 50;
   var MAP_PIN_HEIGTH = 70;
+  var PINS_QUANTITY = 5;
 
   // DOM elements
   var fragment = document.createDocumentFragment();
@@ -23,6 +24,7 @@ window.map = (function () {
   var isPageDisabled = true;
 
   var loadedOffers = [];
+  var filteredOffers = [];
 
   var mapLimits = {
     left: 0,
@@ -35,7 +37,8 @@ window.map = (function () {
     var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
     var pins = document.createDocumentFragment();
 
-    for (var i = 0; i < offers.length; i++) {
+    var pinsNumber = offers.length > PINS_QUANTITY ? PINS_QUANTITY : offers.length;
+    for (var i = 0; i < pinsNumber; i++) {
       var pin = pinTemplate.cloneNode(true);
       var pinLeft = (offers[i].location.x - MAP_PIN_WIDTH / 2) + 'px';
       var pinTop = (offers[i].location.y - MAP_PIN_HEIGTH) + 'px';
@@ -63,8 +66,10 @@ window.map = (function () {
 
   var showOfferInfo = function (index) {
     hideOfferInfo();
-    fragment.appendChild(window.renderOfferPopup(loadedOffers[index]));
+
+    fragment.appendChild(window.offerPopup.render(filteredOffers[index]));
     mapElement.insertBefore(fragment, mapFiltersElement);
+
     var offerInfoCloseElement = document.querySelector('.popup__close');
     offerInfoCloseElement.addEventListener('click', popupCloseClickHandler);
     offerInfoCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
@@ -104,7 +109,8 @@ window.map = (function () {
   };
 
   var succesLoadDataHandler = function (loadedData) {
-    loadedOffers = loadedData;
+    loadedOffers = loadedData.slice(0);
+    filteredOffers = window.filter.apply(loadedOffers);
   };
 
   // Event Listeners
@@ -188,18 +194,29 @@ window.map = (function () {
   var activatePage = function () {
     mapElement.classList.remove('map--faded');
     window.notification.hideAll();
-    var renderedPins = renderOffers(loadedOffers);
+
+    var renderedPins = renderOffers(filteredOffers);
     showOffersOnMap(renderedPins);
+
     window.form.enableForm();
     isPageDisabled = false;
   };
 
   // set default address on page load
   window.form.updateAddress(initialPinX, initialPinY);
-
   window.backend.load(succesLoadDataHandler, window.notification.showError);
 
-  return {
+  window.filter.setCallback(function () {
+    hideOffersOnMap();
+    hideOfferInfo();
+
+    filteredOffers = (window.filter.apply(loadedOffers));
+    var updatedPins = renderOffers(filteredOffers);
+
+    showOffersOnMap(updatedPins);
+  });
+
+  window.map = {
     disablePage: disablePage,
     activatePage: activatePage
   };

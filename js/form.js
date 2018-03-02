@@ -2,7 +2,7 @@
 
 'use strict';
 
-window.form = (function () {
+(function () {
 
   var OFFER_ROOMS_CAPACITY = {
     1: ['1'],
@@ -159,22 +159,28 @@ window.form = (function () {
     window.map.disablePage();
   });
 
-  return {
-    updateAddress: function (x, y) {
-      noticeFormAddress.value = x + ', ' + y;
-    },
-    disableForm: function () {
-      noticeForm.classList.add('notice__form--disabled');
-      noticeFormType.removeEventListener('change', offerTypeChangeHandler);
-      noticeFormRooms.removeEventListener('change', offerRoomsChangeHandler);
-      disableFormFields();
-      resetForm();
-    },
-    enableForm: function () {
-      noticeForm.classList.remove('notice__form--disabled');
-      noticeFormType.addEventListener('change', offerTypeChangeHandler);
-      noticeFormRooms.addEventListener('change', offerRoomsChangeHandler);
-      enableFormFields();
-    }
+  var updateAddress = function (x, y) {
+    noticeFormAddress.value = x + ', ' + y;
+  };
+
+  var disableForm = function () {
+    noticeForm.classList.add('notice__form--disabled');
+    noticeFormType.removeEventListener('change', offerTypeChangeHandler);
+    noticeFormRooms.removeEventListener('change', offerRoomsChangeHandler);
+    disableFormFields();
+    resetForm();
+  };
+
+  var enableForm = function () {
+    noticeForm.classList.remove('notice__form--disabled');
+    noticeFormType.addEventListener('change', offerTypeChangeHandler);
+    noticeFormRooms.addEventListener('change', offerRoomsChangeHandler);
+    enableFormFields();
+  };
+
+  window.form = {
+    updateAddress: updateAddress,
+    disableForm: disableForm,
+    enableForm: enableForm
   };
 })();
