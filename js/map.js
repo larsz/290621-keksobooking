@@ -10,10 +10,8 @@
   var PINS_QUANTITY = 5;
 
   // DOM elements
-  var fragment = document.createDocumentFragment();
   var mapElement = document.querySelector('.map');
   var mapPinsElement = document.querySelector('.map__pins');
-  var mapFiltersElement = document.querySelector('.map__filters-container');
   var mainPinElement = document.querySelector('.map__pin--main');
 
   var initialPinX = mainPinElement.offsetLeft;
@@ -54,25 +52,6 @@
     mapElement.removeEventListener('keydown', popUpEscHandler);
   };
 
-  var showOfferInfo = function (index) {
-    hideOfferInfo();
-
-    fragment.appendChild(window.offerPopup.render(filteredOffers[index]));
-    mapElement.insertBefore(fragment, mapFiltersElement);
-
-    var offerInfoCloseElement = document.querySelector('.popup__close');
-    offerInfoCloseElement.addEventListener('click', popupCloseClickHandler);
-    offerInfoCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
-  };
-
-  var hideOfferInfo = function () {
-    var offerInfo = document.querySelector('.map__card');
-    if (offerInfo) {
-      offerInfo.parentNode.removeChild(offerInfo);
-      mapElement.removeEventListener('keydown', popUpEscHandler);
-    }
-  };
-
   // Handlers
   var mapClickHandler = function (evt) {
     var clickedElement = evt.target;
@@ -82,20 +61,15 @@
 
     var clickedIndex = clickedElement.getAttribute('data-pin');
     if (clickedIndex) {
-      showOfferInfo(clickedIndex);
+      window.offerPopup.render(filteredOffers[clickedIndex]);
     }
   };
 
-  var popupCloseClickHandler = function () {
-    hideOfferInfo();
-  };
-
-  var popupCloseKeyDownHandler = function (evt) {
-    window.utils.isEnterEvent(evt, hideOfferInfo);
-  };
-
   var popUpEscHandler = function (evt) {
-    window.utils.isEscEvent(evt, hideOfferInfo);
+    var offerPopup = document.querySelector('.map__card');
+    if (offerPopup) {
+      window.utils.isEscEvent(evt, window.offerPopup.close);
+    }
   };
 
   var succesLoadDataHandler = function (loadedData) {
@@ -110,11 +84,13 @@
   var disablePage = function () {
     mapElement.classList.add('map--faded');
     hideOffersOnMap();
-    hideOfferInfo();
+    window.offerPopup.close();
+
     mainPinElement.style.top = '';
     mainPinElement.style.left = '';
     window.form.disableForm();
     window.form.updateAddress(initialPinX, initialPinY);
+    window.scrollTo(0, 0);
     isPageDisabled = true;
   };
 
@@ -143,7 +119,7 @@
 
   window.filter.setCallback(function () {
     hideOffersOnMap();
-    hideOfferInfo();
+    window.offerPopup.close();
 
     filteredOffers = (window.filter.apply(loadedOffers));
     var updatedPins = renderOffers(filteredOffers);

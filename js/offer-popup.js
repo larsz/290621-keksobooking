@@ -4,6 +4,7 @@
 
 (function () {
   var template = document.querySelector('template').content.querySelector('.map__card');
+  var mapFiltersElement = document.querySelector('.map__filters-container');
 
   var OfferPhoto = {
     WIDTH: 70,
@@ -61,6 +62,9 @@
   };
 
   var renderOfferPopup = function (ad) {
+
+    closePopup();
+
     var offerPopup = template.cloneNode(true);
     offerPopup.querySelector('.popup__title').textContent = ad.offer.title;
     offerPopup.querySelector('.popup__address').textContent = ad.offer.address;
@@ -85,10 +89,31 @@
     }
     photosElement.appendChild(getPhotos(ad.offer.photos));
 
-    return offerPopup;
+    // inser card in DOM
+    document.querySelector('.map').insertBefore(offerPopup, mapFiltersElement);
+
+    var offerPopupCloseElement = document.querySelector('.popup__close');
+    offerPopupCloseElement.addEventListener('click', popupCloseClickHandler);
+    offerPopupCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
+  };
+
+  var closePopup = function () {
+    var offerPopup = document.querySelector('.map__card');
+    if (offerPopup) {
+      offerPopup.parentNode.removeChild(offerPopup);
+    }
+  };
+
+  var popupCloseClickHandler = function () {
+    closePopup();
+  };
+
+  var popupCloseKeyDownHandler = function (evt) {
+    window.utils.isEnterEvent(evt, closePopup);
   };
 
   window.offerPopup = {
-    render: renderOfferPopup
+    render: renderOfferPopup,
+    close: closePopup
   };
 })();
