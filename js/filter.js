@@ -94,7 +94,7 @@
     }
 
     if (typeof onFilterChangeExternal === 'function') {
-      onFilterChangeExternal();
+      window.utils.debounce(onFilterChangeExternal);
     }
 
   });

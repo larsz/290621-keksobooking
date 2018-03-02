@@ -24,6 +24,7 @@
   var isPageDisabled = true;
 
   var loadedOffers = [];
+  var filteredOffers = [];
 
   var mapLimits = {
     left: 0,
@@ -65,8 +66,10 @@
 
   var showOfferInfo = function (index) {
     hideOfferInfo();
-    fragment.appendChild(window.offerPopup.render(loadedOffers[index]));
+
+    fragment.appendChild(window.offerPopup.render(filteredOffers[index]));
     mapElement.insertBefore(fragment, mapFiltersElement);
+
     var offerInfoCloseElement = document.querySelector('.popup__close');
     offerInfoCloseElement.addEventListener('click', popupCloseClickHandler);
     offerInfoCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
@@ -107,6 +110,7 @@
 
   var succesLoadDataHandler = function (loadedData) {
     loadedOffers = loadedData.slice(0);
+    filteredOffers = window.filter.apply(loadedOffers);
   };
 
   // Event Listeners
@@ -190,7 +194,8 @@
   var activatePage = function () {
     mapElement.classList.remove('map--faded');
     window.notification.hideAll();
-    var renderedPins = renderOffers(window.filter.apply(loadedOffers));
+
+    var renderedPins = renderOffers(filteredOffers);
     showOffersOnMap(renderedPins);
 
     window.form.enableForm();
@@ -205,7 +210,9 @@
     hideOffersOnMap();
     hideOfferInfo();
 
-    var updatedPins = renderOffers(window.filter.apply(loadedOffers));
+    filteredOffers = (window.filter.apply(loadedOffers));
+    var updatedPins = renderOffers(filteredOffers);
+
     showOffersOnMap(updatedPins);
   });
 
