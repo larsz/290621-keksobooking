@@ -7,9 +7,20 @@
     BOTTOM: 450,
     LEFT: 0,
   };
-  var MAIN_PIN_ARROW_CORRECTION = 50;
-  var mainPinElement = document.querySelector('.map__pin--main');
 
+  var mainPinElement = document.querySelector('.map__pin--main');
+  var MAIN_PIN_ARROW_CORRECTION = 50;
+
+  // Activate page by click on main pin
+  mainPinElement.addEventListener('keydown', function (evt) {
+    var isPageDisabled = window.map.checkPageState();
+
+    if (isPageDisabled) {
+      window.utils.isEnterEvent(evt, window.map.activatePage);
+    }
+  });
+
+  // Drag event for main pin
   mainPinElement.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 

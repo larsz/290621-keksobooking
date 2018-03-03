@@ -84,7 +84,6 @@
     window.form.disableForm();
     window.form.updateAddress(initialPinX, initialPinY);
     window.scrollTo(0, 0);
-
     mapElement.removeEventListener('click', mapClickHandler);
   };
 
@@ -92,9 +91,8 @@
     mapElement.classList.remove(MAP_DISABLED_CLASS);
     window.notification.hideAll();
     window.form.enableForm();
-
-    mapElement.addEventListener('click', mapClickHandler, true);
     window.backend.load(succesLoadDataHandler, window.notification.showError);
+    mapElement.addEventListener('click', mapClickHandler, true);
   };
 
   var checkPageState = function () {
@@ -112,13 +110,14 @@
   });
 
   // Page load - initial settings
-  // set default address
+
+  // Set default address
   window.form.updateAddress(initialPinX, initialPinY);
 
-  // disable fieldsets in form
+  // Disable fieldsets in form
   window.form.disableForm();
 
-  // disable fieldsets in form
+  // Disable filters
   window.filter.disable();
 
   window.map = {
