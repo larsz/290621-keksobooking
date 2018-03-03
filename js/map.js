@@ -50,7 +50,6 @@
     pins.forEach(function (item) {
       item.parentNode.removeChild(item);
     });
-    mapElement.removeEventListener('keydown', popUpEscHandler);
   };
 
   // Handlers
@@ -66,21 +65,10 @@
     }
   };
 
-  var popUpEscHandler = function (evt) {
-    var offerPopup = document.querySelector('.map__card');
-    if (offerPopup) {
-      window.utils.isEscEvent(evt, window.offerPopup.close);
-    }
-  };
-
   var succesLoadDataHandler = function (loadedData) {
     loadedOffers = loadedData.slice(0);
     filteredOffers = window.filter.apply(loadedOffers);
   };
-
-  // Event Listeners
-  mapElement.addEventListener('click', mapClickHandler, true);
-  mapElement.addEventListener('keydown', popUpEscHandler, true);
 
   var disablePage = function () {
     mapElement.classList.add('map--faded');
@@ -89,30 +77,42 @@
 
     mainPinElement.style.top = '';
     mainPinElement.style.left = '';
+
     window.form.disableForm();
     window.form.updateAddress(initialPinX, initialPinY);
     window.scrollTo(0, 0);
+
+    mapElement.removeEventListener('click', mapClickHandler);
   };
 
   var activatePage = function () {
     mapElement.classList.remove('map--faded');
-    window.form.enableForm();
     window.notification.hideAll();
+    window.form.enableForm();
+    window.filter.enable();
 
+    // console.log('activatePage', filteredOffers);
     var renderedPins = renderOffers(filteredOffers);
     showOffersOnMap(renderedPins);
+
+    mapElement.addEventListener('click', mapClickHandler, true);
   };
 
   var checkPageState = function () {
     return mapElement.classList.contains(MAP_DISABLED_CLASS);
   };
 
-  // set default address on page load
+  // Page load - initial settings
+  // set default address
   window.form.updateAddress(initialPinX, initialPinY);
 
-  // disable fieldsets on page load
+  // disable fieldsets in form
   window.form.disableForm();
 
+  // disable fieldsets in form
+  window.filter.disable();
+
+  // load offers
   window.backend.load(succesLoadDataHandler, window.notification.showError);
 
   window.filter.setCallback(function () {
@@ -122,6 +122,7 @@
     filteredOffers = (window.filter.apply(loadedOffers));
     var updatedPins = renderOffers(filteredOffers);
 
+    // console.log('filter ', filteredOffers);
     showOffersOnMap(updatedPins);
   });
 

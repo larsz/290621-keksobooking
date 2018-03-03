@@ -94,9 +94,13 @@
     // inser card in DOM
     document.querySelector('.map').insertBefore(offerPopup, mapFiltersElement);
 
+    // handle click or key event on popup close button
     var offerPopupCloseElement = document.querySelector('.popup__close');
     offerPopupCloseElement.addEventListener('click', popupCloseClickHandler);
     offerPopupCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
+
+    // handle popup close with ESC key
+    document.addEventListener('keydown', popUpEscHandler);
   };
 
   var closePopup = function () {
@@ -104,6 +108,7 @@
     if (offerPopup) {
       offerPopup.parentNode.removeChild(offerPopup);
     }
+    document.removeEventListener('keydown', popUpEscHandler);
   };
 
   var popupCloseClickHandler = function () {
@@ -112,6 +117,10 @@
 
   var popupCloseKeyDownHandler = function (evt) {
     window.utils.isEnterEvent(evt, closePopup);
+  };
+
+  var popUpEscHandler = function (evt) {
+    window.utils.isEscEvent(evt, closePopup);
   };
 
   window.offerPopup = {
