@@ -20,10 +20,10 @@
     HIGH: 50000
   };
 
-  var onFilterChangeExternal = null;
+  var filterChangeExternalHanlder = null;
 
   var setCallback = function (cb) {
-    onFilterChangeExternal = cb;
+    filterChangeExternalHanlder = cb;
   };
 
   var applyFilter = function (offers) {
@@ -114,8 +114,8 @@
         break;
     }
 
-    if (typeof onFilterChangeExternal === 'function') {
-      window.utils.debounce(onFilterChangeExternal);
+    if (typeof filterChangeExternalHanlder === 'function') {
+      window.utils.debounce(filterChangeExternalHanlder);
     }
 
   });

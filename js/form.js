@@ -3,6 +3,7 @@
 'use strict';
 
 (function () {
+  var FORM_DISABLED_CLASS = 'notice__form--disabled';
 
   var OfferRoomsCapacity = {
     1: ['1'],
@@ -173,7 +174,7 @@
   };
 
   var disableForm = function () {
-    noticeFormElement.classList.add('notice__form--disabled');
+    noticeFormElement.classList.add(FORM_DISABLED_CLASS);
     noticeFormTypeElement.removeEventListener('change', offerTypeChangeHandler);
     noticeFormRoomsElement.removeEventListener('change', offerRoomsChangeHandler);
     disableFormFields();
@@ -181,7 +182,7 @@
   };
 
   var enableForm = function () {
-    noticeFormElement.classList.remove('notice__form--disabled');
+    noticeFormElement.classList.remove(FORM_DISABLED_CLASS);
     noticeFormTypeElement.addEventListener('change', offerTypeChangeHandler);
     noticeFormRoomsElement.addEventListener('change', offerRoomsChangeHandler);
     enableFormFields();

@@ -8,7 +8,6 @@
   var MAP_PIN_WIDTH = 50;
   var MAP_PIN_HEIGTH = 70;
   var PINS_QUANTITY = 5;
-
   var MAP_DISABLED_CLASS = 'map--faded';
 
   // DOM elements
