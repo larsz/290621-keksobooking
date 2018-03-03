@@ -36,15 +36,15 @@
   var noticeFormControlDefaultStyle = 'd9d9d3';
 
   var enableFormFields = function () {
-    for (var i = 0; i < noticeFieldset.length; i++) {
-      noticeFieldset[i].disabled = false;
-    }
+    noticeFieldset.forEach(function (fieldset) {
+      fieldset.disabled = false;
+    });
   };
 
   var disableFormFields = function () {
-    for (var i = 0; i < noticeFieldset.length; i++) {
-      noticeFieldset[i].disabled = true;
-    }
+    noticeFieldset.forEach(function (fieldset) {
+      fieldset.disabled = true;
+    });
   };
 
   // validation & sync fields
@@ -164,6 +164,7 @@
 
   noticeFormReset.addEventListener('click', function () {
     window.map.disablePage();
+    window.filter.reset();
   });
 
   var updateAddress = function (x, y) {

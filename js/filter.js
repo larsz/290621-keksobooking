@@ -2,6 +2,8 @@
 
 (function () {
   var formFiltersElement = document.querySelector('.map__filters');
+  var formFilterElement = document.querySelectorAll('.map__filter');
+  var formFiltersFeaturesElement = document.querySelector('#housing-features');
   var typeFilterValue = 'any';
   var priceFilterValue = 'any';
   var roomsFilterValue = 'any';
@@ -57,6 +59,25 @@
     });
   };
 
+  var enableFilters = function () {
+    formFiltersFeaturesElement.disabled = false;
+    formFilterElement.forEach(function (filter) {
+      filter.disabled = false;
+    });
+  };
+
+  var disableFilters = function () {
+    formFiltersFeaturesElement.disabled = true;
+    formFilterElement.forEach(function (filter) {
+      filter.disabled = true;
+    });
+  };
+
+  var resetFilters = function () {
+    formFiltersElement.reset();
+    disableFilters();
+  };
+
   formFiltersElement.addEventListener('change', function (evt) {
     var selectedFilter = evt.target;
 
@@ -101,6 +122,9 @@
 
   window.filter = {
     apply: applyFilter,
+    reset: resetFilters,
+    disable: disableFilters,
+    enable: enableFilters,
     setCallback: setCallback
   };
 
