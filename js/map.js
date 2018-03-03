@@ -9,6 +9,8 @@
   var MAP_PIN_HEIGTH = 70;
   var PINS_QUANTITY = 5;
 
+  var MAP_DISABLED_CLASS = 'map--faded';
+
   // DOM elements
   var mapElement = document.querySelector('.map');
   var mapPinsElement = document.querySelector('.map__pins');
@@ -16,7 +18,6 @@
 
   var initialPinX = mainPinElement.offsetLeft;
   var initialPinY = mainPinElement.offsetTop + MAIN_PIN_ARROW_CORRECTION;
-  var isPageDisabled = true;
 
   var loadedOffers = [];
   var filteredOffers = [];
@@ -91,7 +92,6 @@
     window.form.disableForm();
     window.form.updateAddress(initialPinX, initialPinY);
     window.scrollTo(0, 0);
-    isPageDisabled = true;
   };
 
   var activatePage = function () {
@@ -101,12 +101,10 @@
 
     var renderedPins = renderOffers(filteredOffers);
     showOffersOnMap(renderedPins);
-
-    isPageDisabled = false;
   };
 
   var checkPageState = function () {
-    return isPageDisabled;
+    return mapElement.classList.contains(MAP_DISABLED_CLASS);
   };
 
   // set default address on page load

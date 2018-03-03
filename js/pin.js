@@ -7,9 +7,8 @@
     BOTTOM: 450,
     LEFT: 0,
   };
-
-  var mainPinElement = document.querySelector('.map__pin--main');
   var MAIN_PIN_ARROW_CORRECTION = 50;
+  var mainPinElement = document.querySelector('.map__pin--main');
 
   mainPinElement.addEventListener('mousedown', function (evt) {
     evt.preventDefault();

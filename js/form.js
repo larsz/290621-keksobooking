@@ -18,6 +18,8 @@
     PALACE: {minPrice: 10000}
   };
 
+  var NO_GUESTS_ALLOWED = 100;
+
   var noticeForm = document.querySelector('.notice__form');
   var noticeFormReset = noticeForm.querySelector('.form__reset');
   var noticeFieldset = noticeForm.querySelectorAll('fieldset');
@@ -56,10 +58,12 @@
     var selectedRooms = parseInt(noticeFormRooms.options[noticeFormRooms.selectedIndex].value, 10);
     var allowedGuests = OfferRoomsCapacity[selectedRooms];
 
+    noticeFormCapacity.value = selectedRooms;
+
     // sync initial settings
     noticeFormCapacity.value = selectedRooms;
 
-    if (selectedRooms === 100) {
+    if (selectedRooms === NO_GUESTS_ALLOWED) {
       noticeFormCapacity.value = 0;
     }
 

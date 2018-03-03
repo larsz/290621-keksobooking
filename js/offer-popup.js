@@ -37,27 +37,29 @@
 
   var getFeatures = function (data) {
     var features = document.createDocumentFragment();
-    for (var i = 0; i < data.length; i++) {
+    data.forEach(function (item) {
       var feature = document.createElement('li');
-      feature.classList.add('feature', 'feature--' + data[i]);
+      feature.classList.add('feature', 'feature--' + item);
       features.appendChild(feature);
-    }
+    });
+
     return features;
   };
 
   var getPhotos = function (data) {
     var photos = document.createDocumentFragment();
-    for (var i = 0; i < data.length; i++) {
+    data.forEach(function (item) {
       var newPhoto = document.createElement('li');
       var photo = document.createElement('img');
 
-      photo.setAttribute('src', data[i]);
+      photo.setAttribute('src', item);
       photo.width = OfferPhoto.WIDTH;
       photo.height = OfferPhoto.HEIGHT;
 
       newPhoto.appendChild(photo);
       photos.appendChild(newPhoto);
-    }
+    });
+
     return photos;
   };
 
