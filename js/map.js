@@ -26,18 +26,15 @@
     var pinTemplateElement = document.querySelector('template').content.querySelector('.map__pin');
     var pins = document.createDocumentFragment();
 
-    var pinsNumber = data.length > PINS_QUANTITY ? PINS_QUANTITY : data.length;
     data.forEach(function (offer, i) {
-      if (i < pinsNumber) {
-        var pin = pinTemplateElement.cloneNode(true);
-        var pinLeft = (offer.location.x - MAP_PIN_WIDTH / 2) + 'px';
-        var pinTop = (offer.location.y - MAP_PIN_HEIGTH) + 'px';
+      var pin = pinTemplateElement.cloneNode(true);
+      var pinLeft = (offer.location.x - MAP_PIN_WIDTH / 2) + 'px';
+      var pinTop = (offer.location.y - MAP_PIN_HEIGTH) + 'px';
 
-        pin.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
-        pin.querySelector('img').setAttribute('src', offer.author.avatar);
-        pin.setAttribute('data-pin', i);
-        pins.appendChild(pin);
-      }
+      pin.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
+      pin.querySelector('img').setAttribute('src', offer.author.avatar);
+      pin.setAttribute('data-pin', i);
+      pins.appendChild(pin);
     });
 
     return pins;
@@ -69,11 +66,16 @@
 
   var succesLoadDataHandler = function (loadedData) {
     loadedOffers = loadedData.slice(0);
-    filteredOffers = window.filter.apply(loadedOffers);
+    filteredOffers = loadedOffers.slice(0, PINS_QUANTITY);
+
+    var renderedPins = renderOffers(filteredOffers);
+    showOffersOnMap(renderedPins);
+
+    window.filter.enable();
   };
 
   var disablePage = function () {
-    mapElement.classList.add('map--faded');
+    mapElement.classList.add(MAP_DISABLED_CLASS);
     hideOffersOnMap();
     window.offerPopup.close();
 
@@ -88,21 +90,27 @@
   };
 
   var activatePage = function () {
-    mapElement.classList.remove('map--faded');
+    mapElement.classList.remove(MAP_DISABLED_CLASS);
     window.notification.hideAll();
     window.form.enableForm();
-    window.filter.enable();
-
-    // console.log('activatePage', filteredOffers);
-    var renderedPins = renderOffers(filteredOffers);
-    showOffersOnMap(renderedPins);
 
     mapElement.addEventListener('click', mapClickHandler, true);
+    window.backend.load(succesLoadDataHandler, window.notification.showError);
   };
 
   var checkPageState = function () {
     return mapElement.classList.contains(MAP_DISABLED_CLASS);
   };
+
+  window.filter.setCallback(function () {
+    hideOffersOnMap();
+    window.offerPopup.close();
+
+    filteredOffers = window.filter.apply(loadedOffers).slice(0, PINS_QUANTITY);
+    var updatedPins = renderOffers(filteredOffers);
+
+    showOffersOnMap(updatedPins);
+  });
 
   // Page load - initial settings
   // set default address
@@ -113,20 +121,6 @@
 
   // disable fieldsets in form
   window.filter.disable();
-
-  // load offers
-  window.backend.load(succesLoadDataHandler, window.notification.showError);
-
-  window.filter.setCallback(function () {
-    hideOffersOnMap();
-    window.offerPopup.close();
-
-    filteredOffers = (window.filter.apply(loadedOffers));
-    var updatedPins = renderOffers(filteredOffers);
-
-    // console.log('filter ', filteredOffers);
-    showOffersOnMap(updatedPins);
-  });
 
   window.map = {
     disablePage: disablePage,

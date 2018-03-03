@@ -79,11 +79,11 @@
 
     // Render features
     var featuresListElement = offerPopup.querySelector('.popup__features');
-    while (featuresListElement.firstChild) {
-      featuresListElement.removeChild(featuresListElement.firstChild);
-    }
     // Delete features container if an offer hasn't any feature
     if (ad.offer.features.length !== 0) {
+      while (featuresListElement.firstChild) {
+        featuresListElement.removeChild(featuresListElement.firstChild);
+      }
       featuresListElement.appendChild(getFeatures(ad.offer.features));
     } else {
       featuresListElement.parentNode.removeChild(featuresListElement);
@@ -91,11 +91,11 @@
 
     // Render photos
     var photosElement = offerPopup.querySelector('.popup__pictures');
-    while (photosElement.firstChild) {
-      photosElement.removeChild(photosElement.firstChild);
-    }
     // Delete photos container if an offer hasn't any photo
     if (ad.offer.photos.length !== 0) {
+      while (photosElement.firstChild) {
+        photosElement.removeChild(photosElement.firstChild);
+      }
       photosElement.appendChild(getPhotos(ad.offer.photos));
     } else {
       photosElement.parentNode.removeChild(photosElement);
@@ -105,7 +105,7 @@
     document.querySelector('.map').insertBefore(offerPopup, mapFiltersElement);
 
     // Handle click or key event on popup close button
-    var offerPopupCloseElement = document.querySelector('.popup__close');
+    var offerPopupCloseElement = offerPopup.querySelector('.popup__close');
     offerPopupCloseElement.addEventListener('click', popupCloseClickHandler);
     offerPopupCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
 

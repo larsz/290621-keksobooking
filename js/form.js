@@ -86,6 +86,7 @@
   var succesSubmitFormHandler = function () {
     window.notification.showInfo();
     window.map.disablePage();
+    window.filter.reset();
   };
 
   var offerTypeChangeHandler = function () {
