@@ -3,7 +3,7 @@
 'use strict';
 
 (function () {
-  var template = document.querySelector('template').content.querySelector('.map__card');
+  var templateElement = document.querySelector('template').content.querySelector('.map__card');
   var mapFiltersElement = document.querySelector('.map__filters-container');
 
   var OfferPhoto = {
@@ -67,7 +67,7 @@
 
     closePopup();
 
-    var offerPopup = template.cloneNode(true);
+    var offerPopup = templateElement.cloneNode(true);
     offerPopup.querySelector('.popup__title').textContent = ad.offer.title;
     offerPopup.querySelector('.popup__address').textContent = ad.offer.address;
     offerPopup.querySelector('.popup__type').textContent = translateOfferType(ad.offer.type);
@@ -114,9 +114,9 @@
   };
 
   var closePopup = function () {
-    var offerPopup = document.querySelector('.map__card');
-    if (offerPopup) {
-      offerPopup.parentNode.removeChild(offerPopup);
+    var offerPopupElement = document.querySelector('.map__card');
+    if (offerPopupElement) {
+      offerPopupElement.parentNode.removeChild(offerPopupElement);
     }
     document.removeEventListener('keydown', popUpEscHandler);
   };

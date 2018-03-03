@@ -20,54 +20,54 @@
 
   var NO_GUESTS_ALLOWED = 100;
 
-  var noticeForm = document.querySelector('.notice__form');
-  var noticeFormReset = noticeForm.querySelector('.form__reset');
-  var noticeFieldset = noticeForm.querySelectorAll('fieldset');
-  var noticeFormAddress = document.querySelector('#address');
-  var noticeFormTitle = noticeForm.querySelector('#title');
-  var noticeFormType = noticeForm.querySelector('#type');
-  var noticeFormPrice = noticeForm.querySelector('#price');
-  var noticeFormTimein = noticeForm.querySelector('#timein');
-  var noticeFormTimeout = noticeForm.querySelector('#timeout');
-  var noticeFormRooms = noticeForm.querySelector('#room_number');
-  var noticeFormCapacity = noticeForm.querySelector('#capacity');
-  var capacityOptions = noticeFormCapacity.querySelectorAll('option');
+  var noticeFormElement = document.querySelector('.notice__form');
+  var noticeFormResetElement = noticeFormElement.querySelector('.form__reset');
+  var noticeFieldsetsElement = noticeFormElement.querySelectorAll('fieldset');
+  var noticeFormAddressElement = document.querySelector('#address');
+  var noticeFormTitleElement = noticeFormElement.querySelector('#title');
+  var noticeFormTypeElement = noticeFormElement.querySelector('#type');
+  var noticeFormPriceElement = noticeFormElement.querySelector('#price');
+  var noticeFormTimeinElement = noticeFormElement.querySelector('#timein');
+  var noticeFormTimeoutElement = noticeFormElement.querySelector('#timeout');
+  var noticeFormRoomsElement = noticeFormElement.querySelector('#room_number');
+  var noticeFormCapacityElement = noticeFormElement.querySelector('#capacity');
+  var capacityOptionsElement = noticeFormCapacityElement.querySelectorAll('option');
 
   var noticeFormControlDefaultStyle = 'd9d9d3';
 
   var enableFormFields = function () {
-    noticeFieldset.forEach(function (fieldset) {
+    noticeFieldsetsElement.forEach(function (fieldset) {
       fieldset.disabled = false;
     });
   };
 
   var disableFormFields = function () {
-    noticeFieldset.forEach(function (fieldset) {
+    noticeFieldsetsElement.forEach(function (fieldset) {
       fieldset.disabled = true;
     });
   };
 
   // validation & sync fields
   var updatePrice = function () {
-    var minPrice = OfferTypes[noticeFormType.value.toUpperCase()].minPrice;
-    noticeFormPrice.min = minPrice;
-    noticeFormPrice.placeholder = minPrice;
+    var minPrice = OfferTypes[noticeFormTypeElement.value.toUpperCase()].minPrice;
+    noticeFormPriceElement.min = minPrice;
+    noticeFormPriceElement.placeholder = minPrice;
   };
 
   var updateCapacity = function () {
-    var selectedRooms = parseInt(noticeFormRooms.options[noticeFormRooms.selectedIndex].value, 10);
+    var selectedRooms = parseInt(noticeFormRoomsElement.options[noticeFormRoomsElement.selectedIndex].value, 10);
     var allowedGuests = OfferRoomsCapacity[selectedRooms];
 
-    noticeFormCapacity.value = selectedRooms;
+    noticeFormCapacityElement.value = selectedRooms;
 
     // sync initial settings
-    noticeFormCapacity.value = selectedRooms;
+    noticeFormCapacityElement.value = selectedRooms;
 
     if (selectedRooms === NO_GUESTS_ALLOWED) {
-      noticeFormCapacity.value = 0;
+      noticeFormCapacityElement.value = 0;
     }
 
-    capacityOptions.forEach(function (item) {
+    capacityOptionsElement.forEach(function (item) {
       item.disabled = true;
 
       if (allowedGuests.indexOf(item.value) !== -1) {
@@ -77,10 +77,10 @@
   };
 
   var resetForm = function () {
-    noticeForm.reset();
+    noticeFormElement.reset();
     updatePrice();
-    noticeFormTitle.style.borderColor = noticeFormControlDefaultStyle;
-    noticeFormPrice.style.borderColor = noticeFormControlDefaultStyle;
+    noticeFormTitleElement.style.borderColor = noticeFormControlDefaultStyle;
+    noticeFormPriceElement.style.borderColor = noticeFormControlDefaultStyle;
   };
 
   var succesSubmitFormHandler = function () {
@@ -96,93 +96,93 @@
     updateCapacity();
   };
 
-  noticeFormTimein.addEventListener('change', function () {
-    noticeFormTimeout.value = noticeFormTimein.value;
+  noticeFormTimeinElement.addEventListener('change', function () {
+    noticeFormTimeoutElement.value = noticeFormTimeinElement.value;
   });
 
-  noticeFormTimeout.addEventListener('change', function () {
-    noticeFormTimein.value = noticeFormTimeout.value;
+  noticeFormTimeoutElement.addEventListener('change', function () {
+    noticeFormTimeinElement.value = noticeFormTimeoutElement.value;
   });
 
   var validateTitle = function () {
-    if (noticeFormTitle.validity.valueMissing) {
-      noticeFormTitle.setCustomValidity('Введите заголовок!');
-      noticeFormTitle.style.borderColor = 'red';
-    } else if (noticeFormTitle.validity.tooShort) {
-      noticeFormTitle.setCustomValidity('Слишком короткий заголовок - минимум 30 символов!');
-      noticeFormTitle.style.borderColor = 'red';
-    } else if (noticeFormTitle.validity.tooLong) {
-      noticeFormTitle.setCustomValidity('Слишком длинный заголовок - не больше 100 символов!');
-      noticeFormTitle.style.borderColor = 'red';
+    if (noticeFormTitleElement.validity.valueMissing) {
+      noticeFormTitleElement.setCustomValidity('Введите заголовок!');
+      noticeFormTitleElement.style.borderColor = 'red';
+    } else if (noticeFormTitleElement.validity.tooShort) {
+      noticeFormTitleElement.setCustomValidity('Слишком короткий заголовок - минимум 30 символов!');
+      noticeFormTitleElement.style.borderColor = 'red';
+    } else if (noticeFormTitleElement.validity.tooLong) {
+      noticeFormTitleElement.setCustomValidity('Слишком длинный заголовок - не больше 100 символов!');
+      noticeFormTitleElement.style.borderColor = 'red';
     } else {
-      noticeFormTitle.setCustomValidity('');
-      noticeFormTitle.style.borderColor = '#d9d9d3';
+      noticeFormTitleElement.setCustomValidity('');
+      noticeFormTitleElement.style.borderColor = '#d9d9d3';
     }
 
-    noticeFormTitle.addEventListener('input', function () {
-      noticeFormTitle.setCustomValidity('');
-      noticeFormTitle.style.borderColor = '#d9d9d3';
+    noticeFormTitleElement.addEventListener('input', function () {
+      noticeFormTitleElement.setCustomValidity('');
+      noticeFormTitleElement.style.borderColor = '#d9d9d3';
     });
 
   };
 
   var validatePrice = function () {
-    if (noticeFormPrice.validity.valueMissing) {
-      noticeFormPrice.setCustomValidity('Укажите цену');
-      noticeFormPrice.style.borderColor = 'red';
-    } else if (noticeFormPrice.validity.rangeOverflow) {
-      noticeFormPrice.setCustomValidity('Слишком много! Цена не должна быть выше 1 млн');
-      noticeFormPrice.style.borderColor = 'red';
-    } else if (noticeFormPrice.validity.rangeUnderflow) {
-      noticeFormPrice.setCustomValidity('Маловато! Минимальная цена: ' + noticeFormPrice.min);
-      noticeFormPrice.style.borderColor = 'red';
+    if (noticeFormPriceElement.validity.valueMissing) {
+      noticeFormPriceElement.setCustomValidity('Укажите цену');
+      noticeFormPriceElement.style.borderColor = 'red';
+    } else if (noticeFormPriceElement.validity.rangeOverflow) {
+      noticeFormPriceElement.setCustomValidity('Слишком много! Цена не должна быть выше 1 млн');
+      noticeFormPriceElement.style.borderColor = 'red';
+    } else if (noticeFormPriceElement.validity.rangeUnderflow) {
+      noticeFormPriceElement.setCustomValidity('Маловато! Минимальная цена: ' + noticeFormPriceElement.min);
+      noticeFormPriceElement.style.borderColor = 'red';
     } else {
-      noticeFormTitle.setCustomValidity('');
-      noticeFormTitle.style.borderColor = '#d9d9d3';
+      noticeFormTitleElement.setCustomValidity('');
+      noticeFormTitleElement.style.borderColor = '#d9d9d3';
     }
 
-    noticeFormPrice.addEventListener('input', function () {
-      noticeFormPrice.setCustomValidity('');
-      noticeFormPrice.style.borderColor = '#d9d9d3';
+    noticeFormPriceElement.addEventListener('input', function () {
+      noticeFormPriceElement.setCustomValidity('');
+      noticeFormPriceElement.style.borderColor = '#d9d9d3';
     });
 
   };
 
-  noticeFormTitle.addEventListener('keyup', function () {
+  noticeFormTitleElement.addEventListener('keyup', function () {
     validateTitle();
   });
 
-  noticeFormPrice.addEventListener('keyup', function () {
+  noticeFormPriceElement.addEventListener('keyup', function () {
     validatePrice();
   });
 
-  noticeForm.addEventListener('submit', function (evt) {
+  noticeFormElement.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    var formData = new FormData(noticeForm);
+    var formData = new FormData(noticeFormElement);
     window.backend.save(formData, succesSubmitFormHandler, window.notification.showError);
   });
 
-  noticeFormReset.addEventListener('click', function () {
+  noticeFormResetElement.addEventListener('click', function () {
     window.map.disablePage();
     window.filter.reset();
   });
 
   var updateAddress = function (x, y) {
-    noticeFormAddress.value = x + ', ' + y;
+    noticeFormAddressElement.value = x + ', ' + y;
   };
 
   var disableForm = function () {
-    noticeForm.classList.add('notice__form--disabled');
-    noticeFormType.removeEventListener('change', offerTypeChangeHandler);
-    noticeFormRooms.removeEventListener('change', offerRoomsChangeHandler);
+    noticeFormElement.classList.add('notice__form--disabled');
+    noticeFormTypeElement.removeEventListener('change', offerTypeChangeHandler);
+    noticeFormRoomsElement.removeEventListener('change', offerRoomsChangeHandler);
     disableFormFields();
     resetForm();
   };
 
   var enableForm = function () {
-    noticeForm.classList.remove('notice__form--disabled');
-    noticeFormType.addEventListener('change', offerTypeChangeHandler);
-    noticeFormRooms.addEventListener('change', offerRoomsChangeHandler);
+    noticeFormElement.classList.remove('notice__form--disabled');
+    noticeFormTypeElement.addEventListener('change', offerTypeChangeHandler);
+    noticeFormRoomsElement.addEventListener('change', offerRoomsChangeHandler);
     enableFormFields();
   };
 
