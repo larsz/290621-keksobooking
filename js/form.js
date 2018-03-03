@@ -34,7 +34,7 @@
   var noticeFormCapacityElement = noticeFormElement.querySelector('#capacity');
   var capacityOptionsElement = noticeFormCapacityElement.querySelectorAll('option');
 
-  var noticeFormControlDefaultStyle = 'd9d9d3';
+  var noticeFormControlDefaultStyle = '#d9d9d3';
 
   var enableFormFields = function () {
     noticeFieldsetsElement.forEach(function (fieldset) {
@@ -118,12 +118,12 @@
       noticeFormTitleElement.style.borderColor = 'red';
     } else {
       noticeFormTitleElement.setCustomValidity('');
-      noticeFormTitleElement.style.borderColor = '#d9d9d3';
+      noticeFormTitleElement.style.borderColor = noticeFormControlDefaultStyle;
     }
 
     noticeFormTitleElement.addEventListener('input', function () {
       noticeFormTitleElement.setCustomValidity('');
-      noticeFormTitleElement.style.borderColor = '#d9d9d3';
+      noticeFormTitleElement.style.borderColor = noticeFormControlDefaultStyle;
     });
 
   };
@@ -140,12 +140,12 @@
       noticeFormPriceElement.style.borderColor = 'red';
     } else {
       noticeFormTitleElement.setCustomValidity('');
-      noticeFormTitleElement.style.borderColor = '#d9d9d3';
+      noticeFormTitleElement.style.borderColor = noticeFormControlDefaultStyle;
     }
 
     noticeFormPriceElement.addEventListener('input', function () {
       noticeFormPriceElement.setCustomValidity('');
-      noticeFormPriceElement.style.borderColor = '#d9d9d3';
+      noticeFormPriceElement.style.borderColor = noticeFormControlDefaultStyle;
     });
 
   };

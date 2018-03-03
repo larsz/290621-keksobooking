@@ -14,6 +14,7 @@
   var mapElement = document.querySelector('.map');
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPinElement = document.querySelector('.map__pin--main');
+  var pinTemplateElement = document.querySelector('template').content.querySelector('.map__pin');
 
   var initialPinX = mainPinElement.offsetLeft;
   var initialPinY = mainPinElement.offsetTop + MAIN_PIN_ARROW_CORRECTION;
@@ -22,9 +23,8 @@
   var filteredOffers = [];
 
   var renderOffers = function (data) {
-    var pinTemplateElement = document.querySelector('template').content.querySelector('.map__pin');
-    var pins = document.createDocumentFragment();
 
+    var pins = document.createDocumentFragment();
     data.forEach(function (offer, i) {
       var pin = pinTemplateElement.cloneNode(true);
       var pinLeft = (offer.location.x - MAP_PIN_WIDTH / 2) + 'px';
