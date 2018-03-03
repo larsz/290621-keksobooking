@@ -34,7 +34,7 @@
   var noticeFormCapacityElement = noticeFormElement.querySelector('#capacity');
   var capacityOptionsElement = noticeFormCapacityElement.querySelectorAll('option');
 
-  var noticeFormControlDefaultStyle = '#d9d9d3';
+  var FORM_CONTROL_DEFAULT_STYLE = '#d9d9d3';
 
   var enableFormFields = function () {
     noticeFieldsetsElement.forEach(function (fieldset) {
@@ -80,8 +80,8 @@
   var resetForm = function () {
     noticeFormElement.reset();
     updatePrice();
-    noticeFormTitleElement.style.borderColor = noticeFormControlDefaultStyle;
-    noticeFormPriceElement.style.borderColor = noticeFormControlDefaultStyle;
+    noticeFormTitleElement.style.borderColor = FORM_CONTROL_DEFAULT_STYLE;
+    noticeFormPriceElement.style.borderColor = FORM_CONTROL_DEFAULT_STYLE;
   };
 
   var succesSubmitFormHandler = function () {
@@ -118,12 +118,12 @@
       noticeFormTitleElement.style.borderColor = 'red';
     } else {
       noticeFormTitleElement.setCustomValidity('');
-      noticeFormTitleElement.style.borderColor = noticeFormControlDefaultStyle;
+      noticeFormTitleElement.style.borderColor = FORM_CONTROL_DEFAULT_STYLE;
     }
 
     noticeFormTitleElement.addEventListener('input', function () {
       noticeFormTitleElement.setCustomValidity('');
-      noticeFormTitleElement.style.borderColor = noticeFormControlDefaultStyle;
+      noticeFormTitleElement.style.borderColor = FORM_CONTROL_DEFAULT_STYLE;
     });
 
   };
@@ -140,12 +140,12 @@
       noticeFormPriceElement.style.borderColor = 'red';
     } else {
       noticeFormTitleElement.setCustomValidity('');
-      noticeFormTitleElement.style.borderColor = noticeFormControlDefaultStyle;
+      noticeFormTitleElement.style.borderColor = FORM_CONTROL_DEFAULT_STYLE;
     }
 
     noticeFormPriceElement.addEventListener('input', function () {
       noticeFormPriceElement.setCustomValidity('');
-      noticeFormPriceElement.style.borderColor = noticeFormControlDefaultStyle;
+      noticeFormPriceElement.style.borderColor = FORM_CONTROL_DEFAULT_STYLE;
     });
 
   };
