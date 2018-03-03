@@ -82,24 +82,34 @@
     while (featuresListElement.firstChild) {
       featuresListElement.removeChild(featuresListElement.firstChild);
     }
-    featuresListElement.appendChild(getFeatures(ad.offer.features));
+    // Delete features container if an offer hasn't any feature
+    if (ad.offer.features.length !== 0) {
+      featuresListElement.appendChild(getFeatures(ad.offer.features));
+    } else {
+      featuresListElement.parentNode.removeChild(featuresListElement);
+    }
 
     // Render photos
     var photosElement = offerPopup.querySelector('.popup__pictures');
     while (photosElement.firstChild) {
       photosElement.removeChild(photosElement.firstChild);
     }
-    photosElement.appendChild(getPhotos(ad.offer.photos));
+    // Delete photos container if an offer hasn't any photo
+    if (ad.offer.photos.length !== 0) {
+      photosElement.appendChild(getPhotos(ad.offer.photos));
+    } else {
+      photosElement.parentNode.removeChild(photosElement);
+    }
 
-    // inser card in DOM
+    // Insert card in DOM
     document.querySelector('.map').insertBefore(offerPopup, mapFiltersElement);
 
-    // handle click or key event on popup close button
+    // Handle click or key event on popup close button
     var offerPopupCloseElement = document.querySelector('.popup__close');
     offerPopupCloseElement.addEventListener('click', popupCloseClickHandler);
     offerPopupCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
 
-    // handle popup close with ESC key
+    // Handle popup close with ESC key
     document.addEventListener('keydown', popUpEscHandler);
   };
 
