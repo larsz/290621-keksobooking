@@ -2,6 +2,8 @@
 
 (function () {
   var formFiltersElement = document.querySelector('.map__filters');
+  var formFilterElement = document.querySelectorAll('.map__filter');
+  var formFiltersFeaturesElement = document.querySelector('#housing-features');
   var typeFilterValue = 'any';
   var priceFilterValue = 'any';
   var roomsFilterValue = 'any';
@@ -18,10 +20,10 @@
     HIGH: 50000
   };
 
-  var onFilterChangeExternal = null;
+  var filterChangeExternalHanlder = null;
 
   var setCallback = function (cb) {
-    onFilterChangeExternal = cb;
+    filterChangeExternalHanlder = cb;
   };
 
   var applyFilter = function (offers) {
@@ -55,6 +57,25 @@
 
       return hasAppropiateType && hasAppropiatePrice && hasAppropiateRooms && hasAppropiateGuests && hasWiFi && hasDishWasher && hasParking && hasWasher && hasElevator && hasConditioner;
     });
+  };
+
+  var enableFilters = function () {
+    formFiltersFeaturesElement.disabled = false;
+    formFilterElement.forEach(function (filter) {
+      filter.disabled = false;
+    });
+  };
+
+  var disableFilters = function () {
+    formFiltersFeaturesElement.disabled = true;
+    formFilterElement.forEach(function (filter) {
+      filter.disabled = true;
+    });
+  };
+
+  var resetFilters = function () {
+    formFiltersElement.reset();
+    disableFilters();
   };
 
   formFiltersElement.addEventListener('change', function (evt) {
@@ -93,14 +114,17 @@
         break;
     }
 
-    if (typeof onFilterChangeExternal === 'function') {
-      window.utils.debounce(onFilterChangeExternal);
+    if (typeof filterChangeExternalHanlder === 'function') {
+      window.utils.debounce(filterChangeExternalHanlder);
     }
 
   });
 
   window.filter = {
     apply: applyFilter,
+    reset: resetFilters,
+    disable: disableFilters,
+    enable: enableFilters,
     setCallback: setCallback
   };
 

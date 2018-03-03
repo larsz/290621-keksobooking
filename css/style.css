@@ -856,7 +856,7 @@ textarea:focus
 }
 
 .notification {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -868,8 +868,7 @@ textarea:focus
   text-align: center;
   color: #fff;
 }
-.error + .error,
-.success + .error {
+.notification + .notification {
   top: 42px;
 }
 .notification .popup__close {

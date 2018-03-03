@@ -3,51 +3,38 @@
 'use strict';
 
 (function () {
-
   // Const
-  var MAP_HORIZONT_TOP = 150;
-  var MAP_HORIZONT_BOTTOM = 500;
   var MAIN_PIN_ARROW_CORRECTION = 50;
   var MAP_PIN_WIDTH = 50;
   var MAP_PIN_HEIGTH = 70;
   var PINS_QUANTITY = 5;
+  var MAP_DISABLED_CLASS = 'map--faded';
 
   // DOM elements
-  var fragment = document.createDocumentFragment();
   var mapElement = document.querySelector('.map');
   var mapPinsElement = document.querySelector('.map__pins');
-  var mapFiltersElement = document.querySelector('.map__filters-container');
   var mainPinElement = document.querySelector('.map__pin--main');
+  var pinTemplateElement = document.querySelector('template').content.querySelector('.map__pin');
 
   var initialPinX = mainPinElement.offsetLeft;
   var initialPinY = mainPinElement.offsetTop + MAIN_PIN_ARROW_CORRECTION;
-  var isPageDisabled = true;
 
   var loadedOffers = [];
   var filteredOffers = [];
 
-  var mapLimits = {
-    left: 0,
-    right: mapElement.offsetWidth,
-    top: MAP_HORIZONT_TOP - MAIN_PIN_ARROW_CORRECTION,
-    bottom: MAP_HORIZONT_BOTTOM - MAIN_PIN_ARROW_CORRECTION
-  };
+  var renderOffers = function (data) {
 
-  var renderOffers = function (offers) {
-    var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
     var pins = document.createDocumentFragment();
-
-    var pinsNumber = offers.length > PINS_QUANTITY ? PINS_QUANTITY : offers.length;
-    for (var i = 0; i < pinsNumber; i++) {
-      var pin = pinTemplate.cloneNode(true);
-      var pinLeft = (offers[i].location.x - MAP_PIN_WIDTH / 2) + 'px';
-      var pinTop = (offers[i].location.y - MAP_PIN_HEIGTH) + 'px';
+    data.forEach(function (offer, i) {
+      var pin = pinTemplateElement.cloneNode(true);
+      var pinLeft = (offer.location.x - MAP_PIN_WIDTH / 2) + 'px';
+      var pinTop = (offer.location.y - MAP_PIN_HEIGTH) + 'px';
 
       pin.setAttribute('style', 'left: ' + pinLeft + '; top: ' + pinTop);
-      pin.querySelector('img').setAttribute('src', offers[i].author.avatar);
+      pin.querySelector('img').setAttribute('src', offer.author.avatar);
       pin.setAttribute('data-pin', i);
       pins.appendChild(pin);
-    }
+    });
 
     return pins;
   };
@@ -57,30 +44,10 @@
   };
 
   var hideOffersOnMap = function () {
-    var pins = mapPinsElement.querySelectorAll('.map__pin:not(.map__pin--main)');
-    pins.forEach(function (item) {
+    var pinsElement = mapPinsElement.querySelectorAll('.map__pin:not(.map__pin--main)');
+    pinsElement.forEach(function (item) {
       item.parentNode.removeChild(item);
     });
-    mapElement.removeEventListener('keydown', popUpEscHandler);
-  };
-
-  var showOfferInfo = function (index) {
-    hideOfferInfo();
-
-    fragment.appendChild(window.offerPopup.render(filteredOffers[index]));
-    mapElement.insertBefore(fragment, mapFiltersElement);
-
-    var offerInfoCloseElement = document.querySelector('.popup__close');
-    offerInfoCloseElement.addEventListener('click', popupCloseClickHandler);
-    offerInfoCloseElement.addEventListener('keydown', popupCloseKeyDownHandler);
-  };
-
-  var hideOfferInfo = function () {
-    var offerInfo = document.querySelector('.map__card');
-    if (offerInfo) {
-      offerInfo.parentNode.removeChild(offerInfo);
-      mapElement.removeEventListener('keydown', popUpEscHandler);
-    }
   };
 
   // Handlers
@@ -92,132 +59,70 @@
 
     var clickedIndex = clickedElement.getAttribute('data-pin');
     if (clickedIndex) {
-      showOfferInfo(clickedIndex);
+      window.offerPopup.render(filteredOffers[clickedIndex]);
     }
-  };
-
-  var popupCloseClickHandler = function () {
-    hideOfferInfo();
-  };
-
-  var popupCloseKeyDownHandler = function (evt) {
-    window.utils.isEnterEvent(evt, hideOfferInfo);
-  };
-
-  var popUpEscHandler = function (evt) {
-    window.utils.isEscEvent(evt, hideOfferInfo);
   };
 
   var succesLoadDataHandler = function (loadedData) {
     loadedOffers = loadedData.slice(0);
-    filteredOffers = window.filter.apply(loadedOffers);
-  };
-
-  // Event Listeners
-  mapElement.addEventListener('click', mapClickHandler, true);
-  mapElement.addEventListener('keydown', popUpEscHandler, true);
-
-  mainPinElement.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
-
-    var startPinCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
-
-    var mouseMoveHandler = function (moveEvt) {
-      moveEvt.preventDefault();
-      var shift = {
-        x: startPinCoords.x - moveEvt.clientX,
-        y: startPinCoords.y - moveEvt.clientY
-      };
-
-      startPinCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
-
-      var shiftedPinPosition = {
-        top: mainPinElement.offsetTop - shift.y,
-        left: mainPinElement.offsetLeft - shift.x
-      };
-
-      // vertical move
-      if (shiftedPinPosition.top > mapLimits.bottom) {
-        mainPinElement.style.top = mapLimits.bottom + 'px';
-      } else if (shiftedPinPosition.top < mapLimits.top) {
-        mainPinElement.style.top = mapLimits.top + 'px';
-      } else {
-        mainPinElement.style.top = shiftedPinPosition.top + 'px';
-      }
-
-      // horizontal move
-      if (shiftedPinPosition.left > mapLimits.right) {
-        mainPinElement.style.left = mapLimits.right + 'px';
-      } else if (shiftedPinPosition.left < mapLimits.left) {
-        mainPinElement.style.left = mapLimits.left + 'px';
-      } else {
-        mainPinElement.style.left = shiftedPinPosition.left + 'px';
-      }
-    };
-
-    var mouseUpHandler = function (upEvt) {
-      upEvt.preventDefault();
-
-      document.removeEventListener('mousemove', mouseMoveHandler);
-      document.removeEventListener('mouseup', mouseUpHandler);
-
-      if (isPageDisabled) {
-        activatePage();
-      }
-
-      var shiftedPinX = mainPinElement.offsetLeft;
-      var shiftedPinY = mainPinElement.offsetTop + MAIN_PIN_ARROW_CORRECTION;
-
-      window.form.updateAddress(shiftedPinX, shiftedPinY);
-    };
-
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
-  });
-
-  var disablePage = function () {
-    mapElement.classList.add('map--faded');
-    hideOffersOnMap();
-    hideOfferInfo();
-    mainPinElement.style.top = '';
-    mainPinElement.style.left = '';
-    window.form.disableForm();
-    window.form.updateAddress(initialPinX, initialPinY);
-    isPageDisabled = true;
-  };
-  var activatePage = function () {
-    mapElement.classList.remove('map--faded');
-    window.notification.hideAll();
+    filteredOffers = loadedOffers.slice(0, PINS_QUANTITY);
 
     var renderedPins = renderOffers(filteredOffers);
     showOffersOnMap(renderedPins);
 
-    window.form.enableForm();
-    isPageDisabled = false;
+    window.filter.enable();
   };
 
-  // set default address on page load
-  window.form.updateAddress(initialPinX, initialPinY);
-  window.backend.load(succesLoadDataHandler, window.notification.showError);
+  var disablePage = function () {
+    mapElement.classList.add(MAP_DISABLED_CLASS);
+    hideOffersOnMap();
+    window.offerPopup.close();
+
+    mainPinElement.style.top = '';
+    mainPinElement.style.left = '';
+
+    window.form.disableForm();
+    window.form.updateAddress(initialPinX, initialPinY);
+    window.scrollTo(0, 0);
+    mapElement.removeEventListener('click', mapClickHandler);
+  };
+
+  var activatePage = function () {
+    mapElement.classList.remove(MAP_DISABLED_CLASS);
+    window.notification.hideAll();
+    window.form.enableForm();
+    window.backend.load(succesLoadDataHandler, window.notification.showError);
+    mapElement.addEventListener('click', mapClickHandler, true);
+  };
+
+  var checkPageState = function () {
+    return mapElement.classList.contains(MAP_DISABLED_CLASS);
+  };
 
   window.filter.setCallback(function () {
     hideOffersOnMap();
-    hideOfferInfo();
+    window.offerPopup.close();
 
-    filteredOffers = (window.filter.apply(loadedOffers));
+    filteredOffers = window.filter.apply(loadedOffers).slice(0, PINS_QUANTITY);
     var updatedPins = renderOffers(filteredOffers);
 
     showOffersOnMap(updatedPins);
   });
 
+  // Page load - initial settings
+
+  // Set default address
+  window.form.updateAddress(initialPinX, initialPinY);
+
+  // Disable fieldsets in form
+  window.form.disableForm();
+
+  // Disable filters
+  window.filter.disable();
+
   window.map = {
     disablePage: disablePage,
-    activatePage: activatePage
+    activatePage: activatePage,
+    checkPageState: checkPageState
   };
 })();
